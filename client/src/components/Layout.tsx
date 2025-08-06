@@ -1,0 +1,198 @@
+import { Link, useLocation } from "wouter";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
+import ContactModal from "./modals/ContactModal";
+
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
+  const [location] = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+
+  const navigation = [
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Initiatives', href: '/initiatives' },
+    { name: 'Research', href: '/research' },
+    { name: 'News', href: '/news' },
+    { name: 'Contact', href: '/contact' },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === '/') return location === '/';
+    return location.startsWith(href);
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
+        <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link href="/">
+              <div className="flex items-center space-x-2 cursor-pointer" data-testid="logo">
+                <div className="w-8 h-8 bg-gradient-to-r from-cordia-teal to-cordia-green rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">C</span>
+                </div>
+                <span className="text-xl font-bold text-cordia-dark">CordiaEC</span>
+              </div>
+            </Link>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              {navigation.map((item) => (
+                <Link key={item.name} href={item.href}>
+                  <span className={`font-medium transition-colors duration-200 cursor-pointer ${
+                    isActive(item.href) 
+                      ? 'text-cordia-dark' 
+                      : 'text-gray-600 hover:text-cordia-teal'
+                  }`} data-testid={`nav-${item.name.toLowerCase()}`}>
+                    {item.name}
+                  </span>
+                </Link>
+              ))}
+              <Button 
+                onClick={() => setContactModalOpen(true)}
+                className="bg-cordia-blue text-white hover:bg-blue-600"
+                data-testid="button-contact"
+              >
+                Contact
+              </Button>
+            </div>
+            
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                data-testid="button-mobile-menu"
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </div>
+          </div>
+        </nav>
+        
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-100">
+            <div className="px-4 py-4 space-y-4">
+              {navigation.map((item) => (
+                <Link key={item.name} href={item.href}>
+                  <span 
+                    className={`block font-medium cursor-pointer ${
+                      isActive(item.href) 
+                        ? 'text-cordia-dark' 
+                        : 'text-gray-600 hover:text-cordia-teal'
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    data-testid={`mobile-nav-${item.name.toLowerCase()}`}
+                  >
+                    {item.name}
+                  </span>
+                </Link>
+              ))}
+              <Button 
+                onClick={() => {
+                  setContactModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full bg-cordia-blue text-white hover:bg-blue-600"
+                data-testid="button-mobile-contact"
+              >
+                Contact
+              </Button>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Main Content */}
+      <main className="pt-16">
+        {children}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-cordia-dark text-white py-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            {/* Company Info */}
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-cordia-teal to-cordia-green rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">C</span>
+                </div>
+                <span className="text-xl font-bold">CordiaEC</span>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Driving global progress through innovative solutions and strategic partnerships.
+              </p>
+            </div>
+            
+            {/* Quick Links */}
+            <div>
+              <h3 className="font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                {navigation.slice(1).map((item) => (
+                  <li key={item.name}>
+                    <Link href={item.href}>
+                      <span className="text-gray-400 hover:text-cordia-teal transition-colors cursor-pointer">
+                        {item.name}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            {/* Services */}
+            <div>
+              <h3 className="font-semibold mb-4">Services</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>Consulting</li>
+                <li>Partnership Development</li>
+                <li>Market Entry Support</li>
+                <li>Innovation Programs</li>
+              </ul>
+            </div>
+            
+            {/* Contact Info */}
+            <div>
+              <h3 className="font-semibold mb-4">Contact Info</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>contact@cordiaec.com</li>
+                <li>+1 (555) 123-4567</li>
+                <li>Seoul, South Korea</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <div className="text-gray-400 mb-4 md:mb-0">
+              <p>©2024 CordiaEC. All rights reserved. Email: contact@cordiaec.com</p>
+            </div>
+            <div className="flex space-x-6">
+              <a href="#" className="text-gray-400 hover:text-cordia-teal transition-colors text-sm">
+                Privacy Policy
+              </a>
+              <a href="#" className="text-gray-400 hover:text-cordia-teal transition-colors text-sm">
+                Terms of Service
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <ContactModal 
+        open={contactModalOpen} 
+        onOpenChange={setContactModalOpen} 
+      />
+    </div>
+  );
+}
