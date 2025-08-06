@@ -98,6 +98,62 @@ export class MemStorage implements IStorage {
         content: "CordiaEC has received prestigious industry recognition as a leader in cloud computing solutions, highlighting the company's commitment to innovation, customer satisfaction, and technological excellence. The award recognizes CordiaEC's significant contributions to advancing cloud infrastructure and services.",
         publishedDate: new Date("2024-01-05"),
         imageUrl: null
+      },
+      {
+        id: "4",
+        title: "Global Expansion: CordiaEC Opens New Offices in Europe",
+        excerpt: "CordiaEC continues its global expansion with new offices in London, Berlin, and Paris to better serve European clients.",
+        content: "CordiaEC announced the opening of three new European offices in London, Berlin, and Paris as part of its strategic global expansion initiative. These new locations will enhance CordiaEC's ability to serve European clients and partners, providing localized support and strengthening the company's presence in key European markets.",
+        publishedDate: new Date("2023-12-20"),
+        imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200"
+      },
+      {
+        id: "5",
+        title: "CordiaEC Launches Sustainability Initiative",
+        excerpt: "CordiaEC commits to environmental sustainability with new green technology initiatives and carbon neutrality goals.",
+        content: "CordiaEC has launched a comprehensive sustainability initiative aimed at achieving carbon neutrality by 2025. The program includes investments in green technology, renewable energy adoption, and sustainable business practices across all operations. This commitment reflects CordiaEC's dedication to environmental responsibility and sustainable business growth.",
+        publishedDate: new Date("2023-12-15"),
+        imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200"
+      },
+      {
+        id: "6",
+        title: "CordiaEC Wins Innovation Award at Tech Conference",
+        excerpt: "CordiaEC's groundbreaking technology solutions earned recognition at the prestigious Global Tech Innovation Conference.",
+        content: "CordiaEC was honored with the Innovation Excellence Award at the Global Tech Innovation Conference for its revolutionary approach to digital transformation solutions. The award recognizes CordiaEC's pioneering work in developing next-generation technology platforms that help businesses adapt to the rapidly evolving digital landscape.",
+        publishedDate: new Date("2023-12-10"),
+        imageUrl: null
+      },
+      {
+        id: "7",
+        title: "New Research and Development Center Opens",
+        excerpt: "CordiaEC inaugurates state-of-the-art R&D facility to accelerate innovation in emerging technologies.",
+        content: "CordiaEC has officially opened its new state-of-the-art Research and Development center, equipped with cutting-edge laboratories and collaborative spaces designed to accelerate innovation in artificial intelligence, machine learning, and emerging technologies. The facility will house over 200 researchers and engineers working on next-generation solutions.",
+        publishedDate: new Date("2023-12-05"),
+        imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200"
+      },
+      {
+        id: "8",
+        title: "CordiaEC Partners with Leading Universities",
+        excerpt: "Strategic partnerships with top universities worldwide to advance research and develop next-generation talent.",
+        content: "CordiaEC announced strategic partnerships with leading universities across the globe to advance cutting-edge research and develop the next generation of technological talent. These collaborations will focus on joint research projects, student exchange programs, and the development of innovative educational curricula that prepare students for future technology challenges.",
+        publishedDate: new Date("2023-11-30"),
+        imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200"
+      },
+      {
+        id: "9",
+        title: "CordiaEC Achieves Security Certification Milestone",
+        excerpt: "CordiaEC earns prestigious international security certifications, reinforcing commitment to data protection and cybersecurity.",
+        content: "CordiaEC has successfully achieved multiple prestigious international security certifications, including ISO 27001 and SOC 2 Type II, reinforcing the company's unwavering commitment to data protection and cybersecurity excellence. These certifications demonstrate CordiaEC's dedication to maintaining the highest standards of information security.",
+        publishedDate: new Date("2023-11-25"),
+        imageUrl: null
+      },
+      {
+        id: "10",
+        title: "CordiaEC Hosts Annual Innovation Summit",
+        excerpt: "Industry leaders gather at CordiaEC's annual summit to discuss emerging technologies and future trends.",
+        content: "CordiaEC successfully hosted its annual Innovation Summit, bringing together industry leaders, technology pioneers, and visionary entrepreneurs to discuss emerging technologies and future trends. The three-day event featured keynote presentations, panel discussions, and networking opportunities that fostered collaboration and knowledge sharing across industries.",
+        publishedDate: new Date("2023-11-20"),
+        imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200"
       }
     ];
 

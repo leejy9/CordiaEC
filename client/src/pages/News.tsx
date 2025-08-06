@@ -5,9 +5,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import type { NewsArticle } from "@shared/schema";
+import NewsModal from "@/components/modals/NewsModal";
 
 export default function News() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [newsModalOpen, setNewsModalOpen] = useState(false);
   const limit = 9;
 
   const { data: newsData, isLoading } = useQuery({
@@ -84,7 +87,14 @@ export default function News() {
                     </span>
                   </div>
                   
-                  <h3 className="text-xl font-bold text-cordia-dark mb-3 hover:text-cordia-teal transition-colors cursor-pointer" data-testid={`text-news-title-${article.id}`}>
+                  <h3 
+                    className="text-xl font-bold text-cordia-dark mb-3 hover:text-cordia-teal transition-colors cursor-pointer" 
+                    data-testid={`text-news-title-${article.id}`}
+                    onClick={() => {
+                      setSelectedArticle(article);
+                      setNewsModalOpen(true);
+                    }}
+                  >
                     {article.title}
                   </h3>
                   
@@ -96,6 +106,10 @@ export default function News() {
                     variant="ghost"
                     className="text-cordia-blue hover:text-blue-600 font-medium text-sm p-0 h-auto"
                     data-testid={`button-read-more-${article.id}`}
+                    onClick={() => {
+                      setSelectedArticle(article);
+                      setNewsModalOpen(true);
+                    }}
                   >
                     Read More
                   </Button>
@@ -145,6 +159,12 @@ export default function News() {
           )}
         </div>
       </section>
+      
+      <NewsModal 
+        article={selectedArticle} 
+        open={newsModalOpen} 
+        onOpenChange={setNewsModalOpen} 
+      />
     </Layout>
   );
 }

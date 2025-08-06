@@ -34,9 +34,10 @@ type ContactFormData = z.infer<typeof contactFormSchema>;
 interface ContactModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultSubject?: string;
 }
 
-export default function ContactModal({ open, onOpenChange }: ContactModalProps) {
+export default function ContactModal({ open, onOpenChange, defaultSubject }: ContactModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -45,7 +46,7 @@ export default function ContactModal({ open, onOpenChange }: ContactModalProps) 
     defaultValues: {
       name: "",
       email: "",
-      message: "",
+      message: defaultSubject ? `문의 제목: ${defaultSubject}\n\n` : "",
     },
   });
 

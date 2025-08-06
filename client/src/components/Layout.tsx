@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import ContactModal from "./modals/ContactModal";
+import logoIcon from "@assets/Icon_png_2-removebg-preview_1754497111079.png";
+import logoText from "@assets/headline_1754497111077.png";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -35,11 +37,17 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/">
-              <div className="flex items-center space-x-2 cursor-pointer" data-testid="logo">
-                <div className="w-8 h-8 bg-gradient-to-r from-cordia-teal to-cordia-green rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">C</span>
-                </div>
-                <span className="text-xl font-bold text-cordia-dark">CordiaEC</span>
+              <div className="flex items-center space-x-3 cursor-pointer" data-testid="logo">
+                <img 
+                  src={logoIcon} 
+                  alt="CordiaEC Icon" 
+                  className="h-10 w-auto"
+                />
+                <img 
+                  src={logoText} 
+                  alt="CordiaEC" 
+                  className="h-8 w-auto hidden sm:block"
+                />
               </div>
             </Link>
             
@@ -124,11 +132,17 @@ export default function Layout({ children }: LayoutProps) {
           <div className="grid md:grid-cols-4 gap-8">
             {/* Company Info */}
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-cordia-teal to-cordia-green rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">C</span>
-                </div>
-                <span className="text-xl font-bold">CordiaEC</span>
+              <div className="flex items-center space-x-3 mb-4">
+                <img 
+                  src={logoIcon} 
+                  alt="CordiaEC Icon" 
+                  className="h-8 w-auto"
+                />
+                <img 
+                  src={logoText} 
+                  alt="CordiaEC" 
+                  className="h-6 w-auto"
+                />
               </div>
               <p className="text-gray-400 mb-4">
                 Driving global progress through innovative solutions and strategic partnerships.
