@@ -6,34 +6,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Globe, Handshake, Lightbulb, Utensils, LineChart, GraduationCap, MessageSquare } from "lucide-react";
 import InitiativeModal from "@/components/modals/InitiativeModal";
-import ResearchModal from "@/components/modals/ResearchModal";
-import type { Initiative, ResearchPaper } from "@shared/schema";
+import NewsModal from "@/components/modals/NewsModal";
+import type { Initiative, NewsArticle } from "@shared/schema";
 
 export default function Home() {
   const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null);
-  const [selectedResearch, setSelectedResearch] = useState<ResearchPaper | null>(null);
+  const [selectedNews, setSelectedNews] = useState<NewsArticle | null>(null);
   const [initiativeModalOpen, setInitiativeModalOpen] = useState(false);
-  const [researchModalOpen, setResearchModalOpen] = useState(false);
+  const [newsModalOpen, setNewsModalOpen] = useState(false);
 
   const { data: initiativesData } = useQuery({
     queryKey: ["/api/initiatives"],
   });
 
-  const { data: researchData } = useQuery({
-    queryKey: ["/api/research", 1, 3], // First page, limit 3 for preview
+  const { data: newsData } = useQuery({
+    queryKey: ["/api/news", 1, 3], // First page, limit 3 for preview
   });
 
   const initiatives = (initiativesData as any)?.initiatives || [];
-  const researchPapers = (researchData as any)?.papers || [];
+  const newsArticles = (newsData as any)?.articles || [];
 
   const openInitiativeModal = (initiative: Initiative) => {
     setSelectedInitiative(initiative);
     setInitiativeModalOpen(true);
   };
 
-  const openResearchModal = (paper: ResearchPaper) => {
-    setSelectedResearch(paper);
-    setResearchModalOpen(true);
+  const openNewsModal = (article: NewsArticle) => {
+    setSelectedNews(article);
+    setNewsModalOpen(true);
   };
 
   const getInitiativeIcon = (slug: string) => {
@@ -235,10 +235,10 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-4" data-testid="text-research-title">
-              Latest Research
+              Latest News
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Explore our recent research findings and publications that drive innovation and inform strategic decision-making.
+              Stay updated with the latest developments, announcements, and insights from CordiaEC.
             </p>
           </div>
           
@@ -250,39 +250,35 @@ export default function Home() {
                     <tr>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Title</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Date</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Views</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {researchPapers.map((paper: ResearchPaper) => (
-                      <tr key={paper.id} className="hover:bg-gray-50 transition-colors" data-testid={`row-research-${paper.id}`}>
+                    {newsArticles.map((article: NewsArticle) => (
+                      <tr key={article.id} className="hover:bg-gray-50 transition-colors" data-testid={`row-news-${article.id}`}>
                         <td className="px-6 py-4">
                           <div 
                             className="cursor-pointer"
-                            onClick={() => openResearchModal(paper)}
+                            onClick={() => openNewsModal(article)}
                           >
-                            <h3 className="font-semibold text-cordia-dark hover:text-cordia-teal transition-colors" data-testid={`text-research-title-${paper.id}`}>
-                              {paper.title}
+                            <h3 className="font-semibold text-cordia-dark hover:text-cordia-teal transition-colors" data-testid={`text-news-title-${article.id}`}>
+                              {article.title}
                             </h3>
-                            <p className="text-sm text-gray-600 mt-1" data-testid={`text-research-desc-${paper.id}`}>
-                              {paper.description}
+                            <p className="text-sm text-gray-600 mt-1" data-testid={`text-news-desc-${article.id}`}>
+                              {article.excerpt}
                             </p>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-600" data-testid={`text-research-date-${paper.id}`}>
-                          {paper.publishedDate.toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600" data-testid={`text-research-views-${paper.id}`}>
-                          {paper.views.toLocaleString()}
+                        <td className="px-6 py-4 text-sm text-gray-600" data-testid={`text-news-date-${article.id}`}>
+                          {article.publishedDate.toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4">
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => openResearchModal(paper)}
+                            onClick={() => openNewsModal(article)}
                             className="text-cordia-blue hover:text-blue-600 font-medium"
-                            data-testid={`button-research-details-${paper.id}`}
+                            data-testid={`button-news-details-${article.id}`}
                           >
                             View Details
                           </Button>
@@ -295,9 +291,9 @@ export default function Home() {
             </Card>
             
             <div className="text-center mt-8">
-              <Link href="/research">
-                <Button className="bg-cordia-blue text-white hover:bg-blue-600" data-testid="button-view-all-research">
-                  View All Research
+              <Link href="/news">
+                <Button className="bg-cordia-blue text-white hover:bg-blue-600" data-testid="button-view-all-news">
+                  View All News
                 </Button>
               </Link>
             </div>
@@ -332,10 +328,10 @@ export default function Home() {
         initiative={selectedInitiative}
       />
       
-      <ResearchModal 
-        open={researchModalOpen}
-        onOpenChange={setResearchModalOpen}
-        paper={selectedResearch}
+      <NewsModal 
+        open={newsModalOpen}
+        onOpenChange={setNewsModalOpen}
+        article={selectedNews}
       />
     </Layout>
   );

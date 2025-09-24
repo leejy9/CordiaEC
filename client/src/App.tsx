@@ -7,7 +7,6 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Initiatives from "@/pages/Initiatives";
-import Research from "@/pages/Research";
 import News from "@/pages/News";
 import Contact from "@/pages/Contact";
 
@@ -17,7 +16,6 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/initiatives" component={Initiatives} />
-      <Route path="/research" component={Research} />
       <Route path="/news" component={News} />
       <Route path="/contact" component={Contact} />
       <Route component={NotFound} />

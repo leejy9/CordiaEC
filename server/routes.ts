@@ -27,44 +27,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get research papers with pagination
-  app.get("/api/research", async (req, res) => {
-    try {
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-      const result = await storage.getResearchPapers(page, limit);
-      res.json(result);
-    } catch (error) {
-      res.status(500).json({ 
-        success: false, 
-        message: "Failed to fetch research papers" 
-      });
-    }
-  });
-
-  // Get single research paper
-  app.get("/api/research/:id", async (req, res) => {
-    try {
-      const paper = await storage.getResearchPaper(req.params.id);
-      if (!paper) {
-        res.status(404).json({ 
-          success: false, 
-          message: "Research paper not found" 
-        });
-        return;
-      }
-      
-      // Increment view count
-      await storage.incrementResearchPaperViews(req.params.id);
-      
-      res.json({ success: true, paper });
-    } catch (error) {
-      res.status(500).json({ 
-        success: false, 
-        message: "Failed to fetch research paper" 
-      });
-    }
-  });
 
   // Get news articles with pagination
   app.get("/api/news", async (req, res) => {
