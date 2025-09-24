@@ -5,14 +5,11 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Globe, Handshake, Lightbulb, Utensils, LineChart, GraduationCap, MessageSquare } from "lucide-react";
-import InitiativeModal from "@/components/modals/InitiativeModal";
 import NewsModal from "@/components/modals/NewsModal";
 import type { Initiative, NewsArticle } from "@shared/schema";
 
 export default function Home() {
-  const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null);
   const [selectedNews, setSelectedNews] = useState<NewsArticle | null>(null);
-  const [initiativeModalOpen, setInitiativeModalOpen] = useState(false);
   const [newsModalOpen, setNewsModalOpen] = useState(false);
 
   const { data: initiativesData } = useQuery({
@@ -26,10 +23,6 @@ export default function Home() {
   const initiatives = (initiativesData as any)?.initiatives || [];
   const newsArticles = (newsData as any)?.articles || [];
 
-  const openInitiativeModal = (initiative: Initiative) => {
-    setSelectedInitiative(initiative);
-    setInitiativeModalOpen(true);
-  };
 
   const openNewsModal = (article: NewsArticle) => {
     setSelectedNews(article);
@@ -179,8 +172,7 @@ export default function Home() {
             {initiatives.slice(0, 6).map((initiative: Initiative) => (
               <Card 
                 key={initiative.id} 
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer group"
-                onClick={() => openInitiativeModal(initiative)}
+                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300"
                 data-testid={`card-initiative-${initiative.slug}`}
               >
                 <CardContent className="p-6">
@@ -211,10 +203,6 @@ export default function Home() {
                   <p className="text-gray-600 mb-4" data-testid={`text-initiative-description-${initiative.slug}`}>
                     {initiative.description}
                   </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-cordia-teal font-medium">Learn More</span>
-                    <ArrowRight className="w-4 h-4 text-cordia-teal group-hover:translate-x-1 transition-transform" />
-                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -322,11 +310,6 @@ export default function Home() {
       </section>
 
       {/* Modals */}
-      <InitiativeModal 
-        open={initiativeModalOpen}
-        onOpenChange={setInitiativeModalOpen}
-        initiative={selectedInitiative}
-      />
       
       <NewsModal 
         open={newsModalOpen}
