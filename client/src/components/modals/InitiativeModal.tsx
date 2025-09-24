@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLocation } from "wouter";
 import type { Initiative } from "@shared/schema";
 
 interface InitiativeModalProps {
@@ -21,6 +22,12 @@ export default function InitiativeModal({
   initiative, 
   loading = false 
 }: InitiativeModalProps) {
+  const [, setLocation] = useLocation();
+  
+  const handleApplyNow = () => {
+    onOpenChange(false); // Close the modal
+    setLocation('/contact'); // Navigate to contact page
+  };
   
   if (loading) {
     return (
@@ -108,6 +115,7 @@ export default function InitiativeModal({
           </Button>
           <Button 
             className="flex-1 bg-cordia-teal hover:bg-cordia-green text-white"
+            onClick={handleApplyNow}
             data-testid="button-apply"
           >
             Apply Now
