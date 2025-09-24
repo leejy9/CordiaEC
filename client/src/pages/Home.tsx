@@ -308,10 +308,10 @@ export default function Home() {
       {/* Contact CTA Section */}
       <section className="py-20 bg-gradient-to-r from-cordia-teal to-cordia-green">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6" data-testid="text-cta-title">
+          <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6" data-testid="text-cta-title">
             Ready to Get Started?
           </h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto" data-testid="text-cta-description">
+          <p className="text-lg text-black/90 mb-8 max-w-2xl mx-auto" data-testid="text-cta-description">
             Connect with our team to explore partnership opportunities and learn how CordiaEC can help drive your 
             organization's global progress through strategic collaboration.
           </p>
@@ -320,7 +320,7 @@ export default function Home() {
             onClick={() => scrollToSection('contact')}
             data-testid="button-contact-cta"
           >
-            Contact Us Today
+            Contact Us
           </Button>
         </div>
       </section>
