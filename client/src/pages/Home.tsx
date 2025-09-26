@@ -217,10 +217,23 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-4" data-testid="text-initiatives-title">
               Our Initiatives
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
               Discover our comprehensive programs designed to foster innovation, collaboration, and sustainable growth 
               across diverse industries and markets.
             </p>
+            
+            {/* Comprehensive Initiatives Image */}
+            <div className="max-w-4xl mx-auto mb-12">
+              <img 
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                alt="Global collaboration and innovation across diverse industries" 
+                className="w-full h-64 md:h-80 object-cover rounded-2xl shadow-2xl"
+                data-testid="img-initiatives-overview"
+              />
+              <p className="text-sm text-gray-500 mt-3 italic">
+                Empowering global partnerships across K-Food, K-Beauty, Technology, Investment, Education, and Knowledge sectors
+              </p>
+            </div>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
