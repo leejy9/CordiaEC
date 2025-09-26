@@ -226,44 +226,40 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {initiatives.slice(0, 6).map((initiative: Initiative) => (
-              <Card 
-                key={initiative.id} 
-                className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-                data-testid={`card-initiative-${initiative.slug}`}
-              >
-                <CardContent className="p-6">
-                  <div className="w-full h-48 mb-6 flex items-center justify-center rounded-xl overflow-hidden">
-                    {initiative.imageUrl ? (
-                      <img 
-                        src={initiative.imageUrl} 
-                        alt={initiative.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center">
-                        <div className="text-center">
-                          {getInitiativeIcon(initiative.slug)}
-                          <div className="text-2xl font-bold text-green-700 mt-2">
-                            {initiative.slug === 'k-food' ? 'K-Food' :
-                             initiative.slug === 'vc-matching' ? 'VC Match' :
-                             initiative.slug === 'forums' ? 'Forums' :
-                             initiative.title}
-                          </div>
-                        </div>
-                      </div>
-                    )}
+          {/* Initiatives Overview Text */}
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-xl font-bold text-cordia-dark mb-4">Korean Business Programs</h3>
+                  <div className="space-y-3">
+                    <p className="text-gray-600">
+                      <span className="font-semibold text-cordia-teal">K-Food Initiative:</span> Connecting Korean food brands with global distribution channels for international market expansion.
+                    </p>
+                    <p className="text-gray-600">
+                      <span className="font-semibold text-cordia-teal">K-Beauty Program:</span> Supporting Korean beauty brands with certification and market entry assistance worldwide.
+                    </p>
+                    <p className="text-gray-600">
+                      <span className="font-semibold text-cordia-teal">Startup Support:</span> Mentoring diaspora-led startups with funding opportunities and strategic partnerships for global expansion.
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold text-cordia-dark mb-3 group-hover:text-cordia-teal transition-colors" data-testid={`text-initiative-title-${initiative.slug}`}>
-                    {initiative.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4" data-testid={`text-initiative-description-${initiative.slug}`}>
-                    {initiative.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-cordia-dark mb-4">Investment & Development</h3>
+                  <div className="space-y-3">
+                    <p className="text-gray-600">
+                      <span className="font-semibold text-cordia-teal">VC Matching:</span> Bridging innovative companies with international venture capital for strategic investment opportunities.
+                    </p>
+                    <p className="text-gray-600">
+                      <span className="font-semibold text-cordia-teal">Internship Programs:</span> Creating cross-border internship opportunities for Korean diaspora youth in international organizations.
+                    </p>
+                    <p className="text-gray-600">
+                      <span className="font-semibold text-cordia-teal">Knowledge Forums:</span> Facilitating knowledge exchange through seminars and collaborative forums for industry innovation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="text-center mt-12">
