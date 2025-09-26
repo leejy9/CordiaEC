@@ -204,15 +204,12 @@ export default function Home() {
       <section id="initiatives" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-4" data-testid="text-initiatives-title">
+            <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-8" data-testid="text-initiatives-title">
               Our Initiatives
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
-              Our comprehensive programs span Korean business development, international investment opportunities, and global education initiatives. We connect Korean food and beauty brands with international markets, support diaspora-led startups with strategic partnerships, facilitate venture capital matching, create cross-border internship opportunities, and foster knowledge exchange through collaborative forums across diverse industries.
-            </p>
             
             {/* Comprehensive Initiatives Image */}
-            <div className="max-w-4xl mx-auto mb-12">
+            <div className="max-w-4xl mx-auto mb-8">
               <img 
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
                 alt="Global collaboration and innovation across diverse industries" 
@@ -223,6 +220,10 @@ export default function Home() {
                 Empowering global partnerships across K-Food, K-Beauty, Technology, Investment, Education, and Knowledge sectors
               </p>
             </div>
+            
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
+              Our comprehensive programs span Korean business development, international investment opportunities, and global education initiatives. We connect Korean food and beauty brands with international markets, support diaspora-led startups with strategic partnerships, facilitate venture capital matching, create cross-border internship opportunities, and foster knowledge exchange through collaborative forums across diverse industries.
+            </p>
           </div>
           
           {/* Six Initiatives Grid */}
