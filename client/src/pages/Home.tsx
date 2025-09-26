@@ -359,21 +359,51 @@ export default function Home() {
 
       {/* Contact CTA Section */}
       <section className="py-20 bg-gradient-to-r from-cordia-teal to-cordia-green">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6" data-testid="text-cta-title">
-            Ready to Get Started?
-          </h2>
-          <p className="text-lg text-black/90 mb-8 max-w-2xl mx-auto" data-testid="text-cta-description">
-            Connect with our team to explore partnership opportunities and learn how CordiaEC can help drive your 
-            organization's global progress through strategic collaboration.
-          </p>
-          <Button 
-            className="bg-white text-cordia-teal hover:bg-gray-50 px-8 py-4 text-lg font-medium shadow-lg hover:scale-105 transition-all duration-300"
-            onClick={() => scrollToSection('contact')}
-            data-testid="button-contact-cta"
-          >
-            Contact Us
-          </Button>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            
+            {/* Text Content */}
+            <div className="text-center lg:text-left order-2 lg:order-1">
+              <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6" data-testid="text-cta-title">
+                Ready to Get Started?
+              </h2>
+              <p className="text-lg text-black/90 mb-8" data-testid="text-cta-description">
+                Connect with our team to explore partnership opportunities and learn how CordiaEC can help drive your 
+                organization's global progress through strategic collaboration.
+              </p>
+              <Button 
+                className="bg-white text-cordia-teal hover:bg-gray-50 px-8 py-4 text-lg font-medium shadow-lg hover:scale-105 transition-all duration-300"
+                onClick={() => scrollToSection('contact')}
+                data-testid="button-contact-cta"
+              >
+                Contact Us
+              </Button>
+            </div>
+            
+            {/* CTA Image */}
+            <div className="order-1 lg:order-2">
+              <div className="relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                  alt="Business team collaboration and global partnerships" 
+                  className="w-full h-80 object-cover rounded-3xl shadow-2xl"
+                  data-testid="img-cta-collaboration"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-3xl"></div>
+                
+                {/* Overlay text */}
+                <div className="absolute bottom-6 left-6 text-white">
+                  <p className="text-sm font-medium opacity-90">
+                    Join 500+ organizations worldwide
+                  </p>
+                  <p className="text-xs opacity-75 mt-1">
+                    Building bridges across continents
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
         </div>
       </section>
 
