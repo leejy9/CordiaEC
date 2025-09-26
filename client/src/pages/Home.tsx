@@ -207,9 +207,8 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-4" data-testid="text-initiatives-title">
               Our Initiatives
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-              Discover our comprehensive programs designed to foster innovation, collaboration, and sustainable growth 
-              across diverse industries and markets.
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
+              Our comprehensive programs span Korean business development, international investment opportunities, and global education initiatives. We connect Korean food and beauty brands with international markets, support diaspora-led startups with strategic partnerships, facilitate venture capital matching, create cross-border internship opportunities, and foster knowledge exchange through collaborative forums across diverse industries.
             </p>
             
             {/* Comprehensive Initiatives Image */}
@@ -226,38 +225,77 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Initiatives Overview Text */}
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-              <div className="grid md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-xl font-bold text-cordia-dark mb-4">Korean Business Programs</h3>
-                  <div className="space-y-3">
-                    <p className="text-gray-600">
-                      <span className="font-semibold text-cordia-teal">K-Food Initiative:</span> Connecting Korean food brands with global distribution channels for international market expansion.
-                    </p>
-                    <p className="text-gray-600">
-                      <span className="font-semibold text-cordia-teal">K-Beauty Program:</span> Supporting Korean beauty brands with certification and market entry assistance worldwide.
-                    </p>
-                    <p className="text-gray-600">
-                      <span className="font-semibold text-cordia-teal">Startup Support:</span> Mentoring diaspora-led startups with funding opportunities and strategic partnerships for global expansion.
-                    </p>
-                  </div>
+          {/* Six Initiatives Grid */}
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-3 gap-8 mb-8">
+              {/* First Row */}
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-3 rounded-xl overflow-hidden shadow-md">
+                  <img 
+                    src="https://images.unsplash.com/photo-1567306301408-e75d5e8e9fc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400" 
+                    alt="K-Food Initiative" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-cordia-dark mb-4">Investment & Development</h3>
-                  <div className="space-y-3">
-                    <p className="text-gray-600">
-                      <span className="font-semibold text-cordia-teal">VC Matching:</span> Bridging innovative companies with international venture capital for strategic investment opportunities.
-                    </p>
-                    <p className="text-gray-600">
-                      <span className="font-semibold text-cordia-teal">Internship Programs:</span> Creating cross-border internship opportunities for Korean diaspora youth in international organizations.
-                    </p>
-                    <p className="text-gray-600">
-                      <span className="font-semibold text-cordia-teal">Knowledge Forums:</span> Facilitating knowledge exchange through seminars and collaborative forums for industry innovation.
-                    </p>
-                  </div>
+                <h3 className="text-sm font-semibold text-cordia-dark">K-Food Initiative</h3>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-3 rounded-xl overflow-hidden shadow-md">
+                  <img 
+                    src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400" 
+                    alt="K-Beauty Program" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
+                <h3 className="text-sm font-semibold text-cordia-dark">K-Beauty Program</h3>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-3 rounded-xl overflow-hidden shadow-md">
+                  <img 
+                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400" 
+                    alt="Startup Support" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-sm font-semibold text-cordia-dark">Startup Support</h3>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-8">
+              {/* Second Row */}
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-3 rounded-xl overflow-hidden shadow-md">
+                  <img 
+                    src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400" 
+                    alt="VC Matching" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-sm font-semibold text-cordia-dark">VC Matching</h3>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-3 rounded-xl overflow-hidden shadow-md">
+                  <img 
+                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400" 
+                    alt="Internship Programs" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-sm font-semibold text-cordia-dark">Internship Programs</h3>
+              </div>
+              
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-3 rounded-xl overflow-hidden shadow-md">
+                  <img 
+                    src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400" 
+                    alt="Knowledge Forums" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-sm font-semibold text-cordia-dark">Knowledge Forums</h3>
               </div>
             </div>
           </div>
