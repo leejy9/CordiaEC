@@ -2,7 +2,6 @@ import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import ContactModal from "./modals/ContactModal";
 import logoIcon from "@assets/Icon_png_2-removebg-preview_1754497111079.png";
 import logoText from "@assets/headline_1754497111077.png";
 
@@ -13,7 +12,6 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [contactModalOpen, setContactModalOpen] = useState(false);
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -63,13 +61,6 @@ export default function Layout({ children }: LayoutProps) {
                   </span>
                 </Link>
               ))}
-              <Button 
-                onClick={() => setContactModalOpen(true)}
-                className="bg-cordia-blue text-white hover:bg-blue-600"
-                data-testid="button-contact"
-              >
-                Contact
-              </Button>
             </div>
             
             {/* Mobile menu button */}
@@ -105,16 +96,6 @@ export default function Layout({ children }: LayoutProps) {
                   </span>
                 </Link>
               ))}
-              <Button 
-                onClick={() => {
-                  setContactModalOpen(true);
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full bg-cordia-blue text-white hover:bg-blue-600"
-                data-testid="button-mobile-contact"
-              >
-                Contact
-              </Button>
             </div>
           </div>
         )}
@@ -190,10 +171,6 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </footer>
 
-      <ContactModal 
-        open={contactModalOpen} 
-        onOpenChange={setContactModalOpen} 
-      />
     </div>
   );
 }
