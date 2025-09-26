@@ -83,7 +83,7 @@ export default function News() {
                   <div className="flex items-center text-sm text-gray-500 mb-3">
                     <Calendar className="w-4 h-4 mr-2" />
                     <span data-testid={`text-news-date-${article.id}`}>
-                      {article.publishedDate.toLocaleDateString()}
+                      {new Date(article.publishedDate).toLocaleDateString()}
                     </span>
                   </div>
                   

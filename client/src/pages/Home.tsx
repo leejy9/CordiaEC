@@ -258,7 +258,7 @@ export default function Home() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600" data-testid={`text-news-date-${article.id}`}>
-                          {article.publishedDate.toLocaleDateString()}
+                          {new Date(article.publishedDate).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4">
                           <Button

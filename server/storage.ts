@@ -1,7 +1,7 @@
 import { type Contact, type InsertContact, type ResearchPaper, type InsertResearchPaper, type NewsArticle, type InsertNewsArticle, type Initiative, type InsertInitiative, contacts, newsArticles, initiatives, researchPapers } from "@shared/schema";
 import { randomUUID } from "crypto";
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { eq, desc, sql, count } from "drizzle-orm";
 
 export interface IStorage {
@@ -292,7 +292,7 @@ class PostgreSQLStorage implements IStorage {
   private db;
 
   constructor() {
-    const sql = neon(process.env.DATABASE_URL!);
+    const sql = postgres(process.env.DATABASE_URL!);
     this.db = drizzle(sql);
   }
 
