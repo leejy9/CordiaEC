@@ -17,8 +17,9 @@ export default function NewsModal({ article, open, onOpenChange }: NewsModalProp
 
   if (!article) return null;
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('ko-KR', {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
