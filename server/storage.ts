@@ -31,6 +31,7 @@ export class PostgresStorage implements IStorage {
       throw new Error("DATABASE_URL environment variable is required");
     }
     
+    
     const sql = neon(process.env.DATABASE_URL);
     this.db = drizzle(sql);
     
