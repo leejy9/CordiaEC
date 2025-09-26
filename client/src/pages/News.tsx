@@ -15,6 +15,13 @@ export default function News() {
 
   const { data: newsData, isLoading } = useQuery({
     queryKey: ["/api/news", currentPage, limit],
+    queryFn: async () => {
+      const response = await fetch(`/api/news?page=${currentPage}&limit=${limit}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch news');
+      }
+      return response.json();
+    },
   });
 
   const articles = (newsData as any)?.articles || [];
