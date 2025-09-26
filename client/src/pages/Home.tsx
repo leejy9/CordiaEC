@@ -105,45 +105,35 @@ export default function Home() {
     <Layout>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Abstract background with CSS shapes */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100">
-          {/* Abstract geometric shapes */}
-          <div className="absolute top-20 right-20 w-64 h-64 bg-cordia-teal/20 rounded-full blur-3xl"></div>
-          <div className="absolute top-40 left-32 w-48 h-48 bg-cordia-orange/15 rounded-full blur-2xl"></div>
-          <div className="absolute bottom-32 right-40 w-80 h-80 bg-cordia-green/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-32 h-32 bg-cordia-blue/20 rounded-full blur-xl"></div>
-          {/* Geometric overlay shapes */}
-          <div className="absolute top-60 right-60 w-24 h-24 bg-cordia-teal/30 rounded-2xl rotate-45"></div>
-          <div className="absolute top-32 left-60 w-16 h-16 bg-cordia-orange/40 rounded-xl rotate-12"></div>
-        </div>
+        {/* Background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80')"
+          }}
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-cordia-dark mb-6 leading-tight" data-testid="text-hero-title">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight" data-testid="text-hero-title">
               Driving Global Progress Through{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cordia-teal to-cordia-green">
                 Collaboration
               </span>
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-description">
+            <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-description">
               CordiaEC is dedicated to fostering international cooperation and innovation to address pressing global 
               challenges through strategic partnerships and transformative initiatives.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex justify-center items-center">
               <Button 
                 onClick={() => scrollToSection('about')}
                 className="bg-cordia-teal text-white hover:bg-cordia-green px-8 py-4 text-lg font-medium shadow-lg hover:scale-105 transition-all duration-300"
                 data-testid="button-learn-more"
               >
                 Learn More About Us
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={() => scrollToSection('initiatives')}
-                className="border-2 border-gray-200 px-8 py-4 text-lg font-medium hover:border-cordia-teal hover:text-cordia-teal transition-all duration-300"
-                data-testid="button-view-initiatives"
-              >
-                View Initiatives
               </Button>
             </div>
           </div>
