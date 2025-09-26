@@ -2,8 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, ExternalLink } from "lucide-react";
-import { useState } from "react";
-import ContactModal from "./ContactModal";
+import { Link } from "wouter";
 import type { NewsArticle } from "@shared/schema";
 
 interface NewsModalProps {
@@ -13,13 +12,12 @@ interface NewsModalProps {
 }
 
 export default function NewsModal({ article, open, onOpenChange }: NewsModalProps) {
-  const [contactModalOpen, setContactModalOpen] = useState(false);
 
   if (!article) return null;
 
   const formatDate = (date: Date | string) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    return dateObj.toLocaleDateString('ko-KR', {
+    return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -84,28 +82,24 @@ export default function NewsModal({ article, open, onOpenChange }: NewsModalProp
             {/* Contact Section */}
             <div className="bg-gradient-to-r from-cordia-teal/5 to-cordia-green/5 p-6 rounded-lg border">
               <h3 className="text-lg font-semibold text-cordia-dark mb-2">
-                더 자세한 정보가 필요하신가요?
+                Need More Information?
               </h3>
               <p className="text-gray-600 mb-4">
-                이 뉴스에 대한 추가 정보나 문의사항이 있으시면 언제든지 연락해주세요.
+                If you have any additional questions or inquiries about this news, please don't hesitate to contact us.
               </p>
-              <Button 
-                onClick={() => setContactModalOpen(true)}
-                className="bg-cordia-teal hover:bg-cordia-green text-white"
-                data-testid="button-contact-inquiry"
-              >
-                문의하기
-              </Button>
+              <Link href="/contact">
+                <Button 
+                  onClick={() => onOpenChange(false)}
+                  className="bg-cordia-teal hover:bg-cordia-green text-white"
+                  data-testid="button-contact-inquiry"
+                >
+                  Contact Us
+                </Button>
+              </Link>
             </div>
           </div>
         </DialogContent>
       </Dialog>
-      
-      <ContactModal 
-        open={contactModalOpen} 
-        onOpenChange={setContactModalOpen}
-        defaultSubject={`뉴스 문의: ${article.title}`}
-      />
     </>
   );
 }
