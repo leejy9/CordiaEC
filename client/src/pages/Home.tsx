@@ -17,7 +17,7 @@ export default function Home() {
   });
 
   const { data: newsData } = useQuery({
-    queryKey: ["/api/news", 1, 3], // First page, limit 3 for preview
+    queryKey: ["/api/news?page=1&limit=3"], 
   });
 
   const initiatives = (initiativesData as any)?.initiatives || [];
