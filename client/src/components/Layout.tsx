@@ -128,7 +128,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="bg-cordia-dark text-white py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Company Info */}
             <div>
               <div className="flex items-center space-x-3 mb-4">
@@ -161,17 +161,6 @@ export default function Layout({ children }: LayoutProps) {
                     </Link>
                   </li>
                 ))}
-              </ul>
-            </div>
-            
-            {/* Services */}
-            <div>
-              <h3 className="font-semibold mb-4">Services</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>Consulting</li>
-                <li>Partnership Development</li>
-                <li>Market Entry Support</li>
-                <li>Innovation Programs</li>
               </ul>
             </div>
             
