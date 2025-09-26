@@ -31,10 +31,6 @@ export class PostgresStorage implements IStorage {
       throw new Error("DATABASE_URL environment variable is required");
     }
     
-    // Debug: 실제 사용 중인 DATABASE_URL 확인
-    console.log("🔍 Full DATABASE_URL:", process.env.DATABASE_URL);
-    console.log("🔍 URL contains api.pooler?", process.env.DATABASE_URL.includes('api.pooler'));
-    console.log("🔍 URL contains aws-0-ap-northeast-2?", process.env.DATABASE_URL.includes('aws-0-ap-northeast-2'));
     
     const sql = neon(process.env.DATABASE_URL);
     this.db = drizzle(sql);
