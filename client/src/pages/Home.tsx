@@ -292,7 +292,6 @@ export default function Home() {
                     <tr>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Title</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Date</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -313,17 +312,6 @@ export default function Home() {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600" data-testid={`text-news-date-${article.id}`}>
                           {new Date(article.publishedDate).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openNewsModal(article)}
-                            className="text-cordia-blue hover:text-blue-600 font-medium"
-                            data-testid={`button-news-details-${article.id}`}
-                          >
-                            View Details
-                          </Button>
                         </td>
                       </tr>
                     ))}
