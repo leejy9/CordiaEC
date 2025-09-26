@@ -2,7 +2,7 @@ import { type Contact, type InsertContact, type ResearchPaper, type InsertResear
 import { randomUUID } from "crypto";
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Contacts
@@ -43,14 +43,27 @@ export class PostgresStorage implements IStorage {
 
   private async initializeIfEmpty() {
     try {
-      // Check if we have any news articles
-      const existingNews = await this.db.select().from(newsArticles).limit(1);
+      // Check if all required tables exist and have data
+      let needsInitialization = false;
       
-      if (existingNews.length === 0) {
+      try {
+        const existingNews = await this.db.select().from(newsArticles).limit(1);
+        const existingInitiatives = await this.db.select().from(initiatives).limit(1);
+        
+        if (existingNews.length === 0 || existingInitiatives.length === 0) {
+          needsInitialization = true;
+        }
+      } catch (tableError) {
+        // Tables don't exist, need to create them
+        console.log("Tables don't exist, need to initialize");
+        needsInitialization = true;
+      }
+      
+      if (needsInitialization) {
         console.log("Initializing database with sample data...");
         await this.insertSampleData();
       } else {
-        console.log("Database connection successful, data exists");
+        console.log("Database connection successful, all data exists");
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -60,6 +73,46 @@ export class PostgresStorage implements IStorage {
   }
 
   private async insertSampleData() {
+    // First create tables if they don't exist (raw SQL approach)
+    try {
+      await this.db.execute(sql`
+        CREATE TABLE IF NOT EXISTS news_articles (
+          id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          title text NOT NULL,
+          content text NOT NULL,
+          excerpt text NOT NULL,
+          published_date timestamp NOT NULL,
+          image_url text
+        );
+      `);
+      
+      await this.db.execute(sql`
+        CREATE TABLE IF NOT EXISTS initiatives (
+          id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          slug text NOT NULL UNIQUE,
+          title text NOT NULL,
+          description text NOT NULL,
+          content text NOT NULL,
+          image_url text,
+          category text NOT NULL
+        );
+      `);
+      
+      await this.db.execute(sql`
+        CREATE TABLE IF NOT EXISTS contacts (
+          id varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          name text NOT NULL,
+          email text NOT NULL,
+          message text NOT NULL,
+          created_at timestamp DEFAULT now() NOT NULL
+        );
+      `);
+      
+      console.log("Tables created successfully");
+    } catch (error) {
+      console.log("Tables might already exist or error creating:", error);
+    }
+
     // Insert sample news articles
     const sampleNewsArticles = [
       {
