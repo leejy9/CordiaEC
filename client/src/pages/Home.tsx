@@ -227,71 +227,71 @@ export default function Home() {
           
           {/* Six Initiatives Grid */}
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-2 rounded-xl overflow-hidden shadow-md">
+                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1498654896293-37aacf113fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
                     alt="K-Food" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xs font-semibold text-cordia-dark">K-Food</h3>
+                <h3 className="text-sm font-semibold text-cordia-dark">K-Food</h3>
               </div>
               
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-2 rounded-xl overflow-hidden shadow-md">
+                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
                     alt="K-Beauty" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xs font-semibold text-cordia-dark">K-Beauty</h3>
+                <h3 className="text-sm font-semibold text-cordia-dark">K-Beauty</h3>
               </div>
               
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-2 rounded-xl overflow-hidden shadow-md">
+                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
                     alt="Startup Support" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xs font-semibold text-cordia-dark">Startup Support</h3>
+                <h3 className="text-sm font-semibold text-cordia-dark">Startup Support</h3>
               </div>
               
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-2 rounded-xl overflow-hidden shadow-md">
+                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
                     alt="VC Matching" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xs font-semibold text-cordia-dark">VC Matching</h3>
+                <h3 className="text-sm font-semibold text-cordia-dark">VC Matching</h3>
               </div>
               
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-2 rounded-xl overflow-hidden shadow-md">
+                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
                     alt="Internship Programs" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xs font-semibold text-cordia-dark">Internship Programs</h3>
+                <h3 className="text-sm font-semibold text-cordia-dark">Internship Programs</h3>
               </div>
               
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-2 rounded-xl overflow-hidden shadow-md">
+                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
                     src="https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
                     alt="Global Summit" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xs font-semibold text-cordia-dark">Global Summit</h3>
+                <h3 className="text-sm font-semibold text-cordia-dark">Global Summit</h3>
               </div>
             </div>
           </div>
