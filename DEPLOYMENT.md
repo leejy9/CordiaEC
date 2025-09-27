@@ -24,23 +24,44 @@ node prepare-for-deployment.js
 
 ### 단계 2: Supabase 데이터베이스 설정
 
-1. [Supabase 대시보드](https://supabase.com/dashboard/projects)에 접속
-2. 새 프로젝트 생성 (기존 프로젝트가 없는 경우)
-3. 프로젝트 페이지에서 상단 툴바의 **"Connect"** 버튼 클릭
-4. **"Connection string"** → **"Transaction pooler"** 아래의 URI 값 복사
-5. `[YOUR-PASSWORD]`를 프로젝트에서 설정한 실제 데이터베이스 비밀번호로 변경
+#### 2-1. Supabase 프로젝트 생성
+
+1. **[Supabase 대시보드](https://supabase.com/dashboard/projects)에 접속**
+2. **"New Project"** 버튼 클릭
+3. 프로젝트 정보 입력:
+   - **Name**: `CordiaEC` (또는 원하는 이름)
+   - **Database Password**: 강력한 비밀번호 입력 (중요: 기억해두세요!)
+   - **Region**: 가장 가까운 지역 선택
+4. **"Create new project"** 클릭
+5. 프로젝트 생성 완료까지 대기 (1-2분 소요)
+
+#### 2-2. DATABASE_URL 가져오기
+
+1. 프로젝트 대시보드에서 **"Connect"** 버튼 클릭
+2. **"Connection string"** 탭 선택
+3. **"Transaction pooler"** 옵션 선택 (중요!)
+4. 표시된 URI를 복사:
+   ```
+   postgresql://postgres:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
+   ```
+5. `[YOUR-PASSWORD]` 부분을 실제 비밀번호로 교체
 
 ### 단계 3: 환경변수 설정
 
 프로젝트 루트에 `.env` 파일을 생성하고 다음 내용을 입력:
 
 ```env
-# 필수: Supabase 데이터베이스 URL
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@YOUR_PROJECT_REF.pooler.supabase.com:6543/postgres?pgbouncer=true
+# 필수: Supabase 데이터베이스 URL (위에서 복사한 URL 붙여넣기)
+DATABASE_URL=postgresql://postgres:YOUR_ACTUAL_PASSWORD@aws-0-[REGION].pooler.supabase.com:6543/postgres
 
 # 애플리케이션 설정
 NODE_ENV=production
 PORT=5000
+```
+
+**예시**:
+```env
+DATABASE_URL=postgresql://postgres:mySecurePassword123@aws-0-us-west-1.pooler.supabase.com:6543/postgres
 ```
 
 ### 단계 4: 데이터베이스 스키마 생성
