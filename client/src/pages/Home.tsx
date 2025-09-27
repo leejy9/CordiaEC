@@ -380,13 +380,14 @@ export default function Home() {
                 Connect with our team to explore partnership opportunities and learn how CordiaEC can help drive your 
                 organization's global progress through strategic collaboration.
               </p>
-              <Button 
-                className="bg-white text-cordia-teal hover:bg-gray-50 px-8 py-4 text-lg font-medium shadow-lg hover:scale-105 transition-all duration-300"
-                onClick={() => scrollToSection('contact')}
-                data-testid="button-contact-cta"
-              >
-                Contact Us
-              </Button>
+              <Link href="/contact">
+                <Button 
+                  className="bg-white text-cordia-teal hover:bg-gray-50 px-8 py-4 text-lg font-medium shadow-lg hover:scale-105 transition-all duration-300"
+                  data-testid="button-contact-cta"
+                >
+                  Contact Us
+                </Button>
+              </Link>
             </div>
             
             {/* CTA Image */}

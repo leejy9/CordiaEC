@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Utensils, LineChart, GraduationCap, MessageSquare, Globe, Users } from "lucide-react";
@@ -66,6 +66,11 @@ const initiatives: Initiative[] = [
 export default function Initiatives() {
   const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const openModal = (initiative: Initiative) => {
     setSelectedInitiative(initiative);
