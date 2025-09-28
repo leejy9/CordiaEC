@@ -1,86 +1,85 @@
-# CordiaEC Web Application
+# Overview
 
-## Overview
+CordiaEC is a Korean diaspora-focused web platform that connects Korean businesses with international markets through various initiatives. The platform features a modern React-based frontend with a Node.js/Express backend, providing services for K-Food, K-Beauty, startup programs, VC matching, and internship opportunities. The website includes content management for initiatives and news articles, along with contact form functionality.
 
-CordiaEC is a modern full-stack web application built as a corporate website for a global solutions company. The application features a responsive React frontend with a Node.js/Express backend, showcasing company information, research papers, news articles, initiatives, and contact functionality. The project uses a monorepo structure with shared TypeScript schemas and implements modern web development practices including server-side rendering support and comprehensive UI components.
-
-## User Preferences
+# User Preferences
 
 Preferred communication style: Simple, everyday language.
 
-## System Architecture
+# System Architecture
 
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript using Vite as the build tool
-- **Routing**: Wouter for lightweight client-side routing
-- **UI Framework**: Tailwind CSS with shadcn/ui component library built on Radix UI primitives
-- **State Management**: TanStack Query (React Query) for server state management
+## Frontend Architecture
+
+The client-side application uses React with TypeScript, built with Vite as the build tool. The application follows a component-based architecture with:
+
+- **Routing**: Wouter for client-side routing
+- **State Management**: React Query (TanStack Query) for server state management
+- **UI Components**: Custom component library built with Radix UI primitives and styled with Tailwind CSS
 - **Forms**: React Hook Form with Zod validation
-- **Styling**: CSS variables for theming with support for light/dark modes and custom brand colors
+- **Styling**: Tailwind CSS with custom brand colors and design tokens
 
-### Backend Architecture
-- **Runtime**: Node.js with Express.js framework
-- **Language**: TypeScript with ES modules
-- **API Design**: RESTful API with JSON responses
-- **Development**: Hot reloading with Vite middleware integration
-- **Error Handling**: Centralized error middleware with structured error responses
+The frontend is organized into pages (Home, About, Initiatives, News, Contact), reusable components, and modal dialogs for detailed content display.
 
-### Data Storage Solutions
-- **Database**: PostgreSQL with Drizzle ORM
-- **Connection**: Neon Database serverless driver
-- **Schema**: Shared TypeScript schemas between frontend and backend
-- **Migrations**: Drizzle Kit for database schema management
-- **Development**: In-memory storage implementation for rapid development and testing
+## Backend Architecture
 
-### Authentication and Authorization
-- **Session Management**: Express sessions with PostgreSQL session store (connect-pg-simple)
-- **No Authentication**: Currently implements public-facing corporate website without user authentication
+The server uses Express.js with TypeScript, following a RESTful API design:
 
-### Database Schema Design
-The application uses four main entities:
-- **Contacts**: User contact form submissions with name, email, and message
-- **Research Papers**: Academic publications with metadata, view counts, and download tracking
-- **News Articles**: Company news with excerpts and publication dates
-- **Initiatives**: Company programs and projects with categorization and detailed content
+- **Database Layer**: Drizzle ORM with PostgreSQL, featuring both in-memory storage for development and PostgreSQL for production
+- **API Routes**: RESTful endpoints for contacts, news articles, research papers, and initiatives
+- **Storage Interface**: Abstracted storage layer supporting both memory-based and PostgreSQL implementations
+- **Development Setup**: Vite integration for hot module replacement in development
 
-### Component Architecture
-- **Design System**: Comprehensive UI component library based on shadcn/ui
-- **Modal System**: Reusable modal components for displaying detailed content
-- **Layout System**: Shared layout component with responsive navigation
-- **Form Components**: Validated form components with error handling
-- **Loading States**: Skeleton components and loading indicators
+## Database Schema
 
-### Build and Deployment
-- **Development**: Vite dev server with Express API proxy
-- **Production**: Vite build for static assets, esbuild for server bundling
-- **Assets**: Static file serving with Vite integration
-- **Environment**: Environment-based configuration with development/production modes
+The application uses PostgreSQL with the following main entities:
 
-## External Dependencies
+- **contacts**: User inquiries with name, email, message, and timestamps
+- **news_articles**: Content management for news with title, content, excerpt, and publication dates
+- **research_papers**: Academic content with view/download tracking
+- **initiatives**: Program information with slugs, categories, and rich content
+- **UUID Primary Keys**: All tables use UUID primary keys for better distributed system support
 
-### Core Framework Dependencies
-- **React Ecosystem**: React 18, React DOM, React Hook Form, TanStack Query
-- **Backend Framework**: Express.js with TypeScript support
-- **Build Tools**: Vite, esbuild, TypeScript compiler
+## Authentication and Authorization
 
-### Database and ORM
-- **Database**: PostgreSQL via Neon serverless driver (@neondatabase/serverless)
-- **ORM**: Drizzle ORM with Drizzle Kit for migrations
-- **Validation**: Zod for runtime type validation and schema generation
+Currently implements a simple approach without user authentication, suitable for a public-facing informational website. Contact forms are the primary user interaction point.
 
-### UI and Styling
-- **CSS Framework**: Tailwind CSS with PostCSS and Autoprefixer
-- **Component Library**: Extensive Radix UI primitives for accessible components
-- **Icons**: Lucide React icon library
-- **Utilities**: clsx and tailwind-merge for conditional styling
+# External Dependencies
 
-### Development Tools
-- **Routing**: Wouter for lightweight client-side routing
-- **Date Handling**: date-fns for date manipulation and formatting
-- **Carousel**: Embla Carousel for interactive content sliders
-- **Session Storage**: connect-pg-simple for PostgreSQL session management
+## Core Framework Dependencies
 
-### Replit Integration
-- **Development**: Replit-specific development tools and error overlay
-- **Cartographer**: Replit code mapping for development environment
-- **Banner**: Development mode banner for external access
+- **React 18**: Frontend framework with TypeScript support
+- **Express.js**: Backend web framework
+- **Vite**: Build tool and development server
+- **Node.js**: Runtime environment
+
+## Database and ORM
+
+- **PostgreSQL**: Production database (via Supabase or other providers)
+- **Drizzle ORM**: Type-safe database toolkit
+- **@neondatabase/serverless**: PostgreSQL driver for serverless environments
+
+## UI and Styling
+
+- **Tailwind CSS**: Utility-first CSS framework
+- **Radix UI**: Unstyled, accessible UI components
+- **Lucide React**: Icon library
+- **shadcn/ui**: Pre-built component patterns
+
+## Development and Platform Tools
+
+- **@replit/vite-plugin-cartographer**: Replit-specific development tooling (removed for external deployments)
+- **@replit/vite-plugin-runtime-error-modal**: Development error handling (removed for external deployments)
+
+## Form Handling and Validation
+
+- **React Hook Form**: Form state management
+- **Zod**: Schema validation
+- **@hookform/resolvers**: Integration between React Hook Form and Zod
+
+## Deployment Infrastructure
+
+- **Supabase**: Recommended PostgreSQL hosting for production
+- **Vercel/Netlify**: Supported deployment platforms
+- **Environment Variables**: DATABASE_URL for database connection
+
+The application includes deployment preparation scripts that automatically remove Replit-specific dependencies and configure the project for external hosting platforms.
