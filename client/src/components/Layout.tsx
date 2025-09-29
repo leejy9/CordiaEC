@@ -149,15 +149,15 @@ export default function Layout({ children }: LayoutProps) {
             <div>
               <h3 className="font-semibold mb-4">Contact Info</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>grasshopper.98.jy@gmail.com</li>
-                <li>Seoul, South Korea</li>
+                <li>k-academy@inha.ac.kr</li>
+                <li>Incheon, South Korea</li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 mb-4 md:mb-0">
-              <p>©2024 CordiaEC. All rights reserved. Email: grasshopper.98.jy@gmail.com</p>
+              <p>©2025 CordiaEC. All rights reserved. Email: k-academy@inha.ac.kr</p>
             </div>
             <div className="flex space-x-6">
               <a href="#" className="text-gray-400 hover:text-cordia-teal transition-colors text-sm">

@@ -12,9 +12,8 @@ export default function About() {
               About CordiaEC
             </h1>
             <p className="text-lg sm:text-xl text-white/90 leading-relaxed" data-testid="text-about-hero-description">
-              CordiaEC is a global leader in innovative solutions, dedicated to transforming industries and empowering
-              businesses worldwide. Our commitment to excellence and cutting-edge technology drives us to deliver
-              unparalleled value to our clients.
+              Cordia is a global hub rooted in Korean Studies, connecting knowledge and people across borders.
+              We work with scholars and experts who hold deep cultural insight, helping businesses expand into Korea and supporting global outreach with trusted networks.
             </p>
           </div>
         </div>
@@ -40,12 +39,11 @@ export default function About() {
               <div className="mt-8">
                 <h3 className="text-xl font-bold text-cordia-dark mb-4">Our Vision</h3>
                 <p className="text-gray-600 leading-relaxed" data-testid="text-vision-description">
-                  To be the foremost catalyst for global progress, shaping a future where innovation and collaboration 
-                  converge to create a better world for all.
+                  To become the trusted bridge where Korean expertise meets global opportunities.
+                  We envision a world where cultural understanding fosters sustainable growth, collaboration, and shared progress.
                 </p>
                 <p className="text-gray-600 leading-relaxed mt-4">
-                  We envision a world where our solutions empower businesses to thrive, communities to prosper, and 
-                  individuals to reach their full potential.
+                  
                 </p>
               </div>
             </div>
@@ -60,11 +58,11 @@ export default function About() {
               <div className="mt-8">
                 <h3 className="text-xl font-bold text-cordia-dark mb-4">Our Mission</h3>
                 <p className="text-gray-600 leading-relaxed" data-testid="text-mission-description">
-                  To deliver transformative solutions that drive sustainable growth and positive impact across industries.
+                  To empower global partners with Korea-focused knowledge and networks.
+                  We are dedicated to creating spaces for dialogue, supporting business expansion, and building partnerships that connect communities worldwide.
                 </p>
                 <p className="text-gray-600 leading-relaxed mt-4">
-                  We are dedicated to fostering innovation, embracing diversity, and building lasting partnerships that 
-                  create value for our clients and stakeholders.
+                  
                 </p>
               </div>
             </div>
@@ -90,8 +88,8 @@ export default function About() {
                 className="w-full h-48 object-cover rounded-xl mb-4"
                 data-testid="img-founded"
               />
-              <h3 className="text-lg font-bold text-cordia-dark mb-2">Founded in 2008</h3>
-              <p className="text-gray-600 text-sm">Established headquarters in Seoul, South Korea</p>
+              <h3 className="text-lg font-bold text-cordia-dark mb-2">Founded in 1985</h3>
+              <p className="text-gray-600 text-sm">Inha University Institute of International Relations established</p>
             </div>
             
             <div className="text-center">
@@ -101,8 +99,8 @@ export default function About() {
                 className="w-full h-48 object-cover rounded-xl mb-4"
                 data-testid="img-expansion"
               />
-              <h3 className="text-lg font-bold text-cordia-dark mb-2">Expanded to Asia in 2010</h3>
-              <p className="text-gray-600 text-sm">Opened regional offices in Singapore and Tokyo</p>
+              <h3 className="text-lg font-bold text-cordia-dark mb-2">Expanded in 2022</h3>
+              <p className="text-gray-600 text-sm">K-Academic Diffusion Research Center launched to expand academic and cultural initiatives</p>
             </div>
             
             <div className="text-center">
@@ -112,8 +110,8 @@ export default function About() {
                 className="w-full h-48 object-cover rounded-xl mb-4"
                 data-testid="img-flagship"
               />
-              <h3 className="text-lg font-bold text-cordia-dark mb-2">Launched flagship products in 2015</h3>
-              <p className="text-gray-600 text-sm">Introduced our flagship innovation platform</p>
+              <h3 className="text-lg font-bold text-cordia-dark mb-2">New beginning in 2025</h3>
+              <p className="text-gray-600 text-sm">Cordia founded as a global hub, connecting expertise in Korean Studies with business and cultural opportunities</p>
             </div>
             
             <div className="text-center">
@@ -123,8 +121,8 @@ export default function About() {
                 className="w-full h-48 object-cover rounded-xl mb-4"
                 data-testid="img-milestone"
               />
-              <h3 className="text-lg font-bold text-cordia-dark mb-2">Reached 1000+ clients in 2020</h3>
-              <p className="text-gray-600 text-sm">Expanded our global presence significantly</p>
+              <h3 className="text-lg font-bold text-cordia-dark mb-2">Today & Beyond</h3>
+              <p className="text-gray-600 text-sm">Growing into a trusted platform for global networks and cross-border collaboration</p>
             </div>
           </div>
           

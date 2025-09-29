@@ -37,7 +37,7 @@ export default function Contact() {
                       <div>
                         <h3 className="font-semibold text-cordia-dark mb-1">Email</h3>
                         <p className="text-gray-600" data-testid="text-contact-email">
-                          contact@cordiaec.com
+                          k-academy@inha.ac.kr
                         </p>
                       </div>
                     </div>
@@ -53,7 +53,7 @@ export default function Contact() {
                       <div>
                         <h3 className="font-semibold text-cordia-dark mb-1">Phone</h3>
                         <p className="text-gray-600" data-testid="text-contact-phone">
-                          +1 (555) 123-4567
+                          +82-032-860-8265
                         </p>
                       </div>
                     </div>
@@ -69,8 +69,8 @@ export default function Contact() {
                       <div>
                         <h3 className="font-semibold text-cordia-dark mb-1">Address</h3>
                         <p className="text-gray-600" data-testid="text-contact-address">
-                          123 Innovation Street<br />
-                          Seoul, South Korea 04551
+                          K-ACADEMIC DIFFUSION RESEARCH CENTER. 100 Inha-ro<br />
+                          Michuhol-gu, Incheon 22212, KOREA.
                         </p>
                       </div>
                     </div>
@@ -83,7 +83,7 @@ export default function Contact() {
                 <div className="space-y-2 text-gray-600">
                   <div className="flex justify-between">
                     <span>Monday - Friday:</span>
-                    <span>9:00 AM - 6:00 PM KST</span>
+                    <span>10:00 AM - 4:00 PM KST</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Saturday:</span>

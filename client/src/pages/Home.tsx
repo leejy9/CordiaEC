@@ -114,27 +114,22 @@ export default function Home() {
         />
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/40"></div>
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight" data-testid="text-hero-title">
-              Driving Global Progress Through{" "}
+              Global Bridges, Rooted in Korean Studies {" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cordia-teal to-cordia-green">
-                Collaboration
+
               </span>
             </h1>
-            <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed" data-testid="text-hero-description">
-              CordiaEC is dedicated to fostering international cooperation and innovation to address pressing global 
-              challenges through strategic partnerships and transformative initiatives.
+            <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-4xl mx-auto leading-relaxed" data-testid="text-hero-description">
+              Cordia links knowledge, people, and opportunities for those seeking a deeper understanding of Korea.
+              With expertise rooted in Korean Studies, we provide insights, partnerships, and cultural context that help global audiences connect with Korea in meaningful ways.
+              Our mission is to bridge local expertise with international networks, fostering collaboration across culture, business, and education.
             </p>
             <div className="flex justify-center items-center">
-              <Button 
-                onClick={() => scrollToSection('about')}
-                className="bg-cordia-teal text-white hover:bg-cordia-green px-8 py-4 text-lg font-medium shadow-lg hover:scale-105 transition-all duration-300"
-                data-testid="button-learn-more"
-              >
-                Learn More About Us
-              </Button>
+              
             </div>
           </div>
         </div>
@@ -157,36 +152,34 @@ export default function Home() {
                 About CordiaEC
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed" data-testid="text-about-description">
-                CordiaEC is a global leader in innovative solutions, dedicated to transforming industries and empowering 
-                businesses worldwide. Our commitment to excellence and cutting-edge technology drives us to deliver 
-                unparalleled value to our clients.
+                Cordia is a global hub rooted in Korean Studies, connecting knowledge and people across borders. We create trusted networks and opportunities that deepen understanding of Korea worldwide.
               </p>
               <div className="space-y-4 mb-8">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-cordia-teal/10 rounded-lg flex items-center justify-center mr-4">
-                    <Globe className="text-cordia-teal text-xl" />
+                <div className="flex items-start">
+                  <div className="w-12 h-12 flex-shrink-0 bg-yellow-600/10 rounded-lg flex items-center justify-center mr-4">
+                    <Lightbulb className="text-yellow-600 text-xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-cordia-dark">Global Innovation</h3>
-                    <p className="text-gray-600">Fostering international cooperation and technological advancement</p>
+                    <h3 className="font-semibold text-cordia-dark">Insightful Knowledge</h3>
+                    <p className="text-gray-600">Sharing trusted perspectives on Korea</p>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-cordia-green/10 rounded-lg flex items-center justify-center mr-4">
-                    <Handshake className="text-cordia-green text-xl" />
+                <div className="flex items-start">
+                  <div className="w-12 h-12 flex-shrink-0 bg-indigo-600/10 rounded-lg flex items-center justify-center mr-4">
+                    <Users className="text-indigo-600 text-xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-cordia-dark">Strategic Partnerships</h3>
-                    <p className="text-gray-600">Building bridges between innovators and industry leaders</p>
+                    <h3 className="font-semibold text-cordia-dark">Trusted Networks</h3>
+                    <p className="text-gray-600">Connecting experts, communities, and institutions</p>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-cordia-blue/10 rounded-lg flex items-center justify-center mr-4">
-                    <Lightbulb className="text-cordia-blue text-xl" />
+                    <div className="flex items-start">
+                      <div className="w-12 h-12 flex-shrink-0 bg-green-600/10 rounded-lg flex items-center justify-center mr-4">
+                        <Handshake className="text-green-600 text-xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-cordia-dark">Transformative Solutions</h3>
-                    <p className="text-gray-600">Developing cutting-edge solutions for tomorrow's challenges</p>
+                    <h3 className="font-semibold text-cordia-dark">Collaborative Opportunities</h3>
+                    <p className="text-gray-600">Creating spaces for global partnerships</p>
                   </div>
                 </div>
               </div>
@@ -207,7 +200,7 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-8" data-testid="text-initiatives-title">
               Our Initiatives
             </h2>
-            
+
             {/* Comprehensive Initiatives Image */}
             <div className="max-w-4xl mx-auto mb-8">
               <img 
@@ -220,12 +213,12 @@ export default function Home() {
                 Empowering global partnerships across K-Food, K-Beauty, Technology, Investment, Education, and Knowledge sectors
               </p>
             </div>
-            
+
             <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
-              Our comprehensive programs span Korean business development, international investment opportunities, and global education initiatives. We connect Korean food and beauty brands with international markets, support diaspora-led startups with strategic partnerships, facilitate venture capital matching, create cross-border internship opportunities, and foster knowledge exchange through collaborative forums across diverse industries.
+              Cordia drives collaboration across Korean business, culture, and education. From K-Food and K-Beauty to startups and venture capital, we create trusted bridges that connect global partners and unlock new opportunities. By fostering cross-border internships and global forums, we ensure knowledge and innovation flow seamlessly across communities.
             </p>
           </div>
-          
+
           {/* Six Initiatives Grid */}
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -239,7 +232,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-sm font-semibold text-cordia-dark">K-Food</h3>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
@@ -250,18 +243,18 @@ export default function Home() {
                 </div>
                 <h3 className="text-sm font-semibold text-cordia-dark">K-Beauty</h3>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
-                    src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
+                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
                     alt="Startup Support" 
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <h3 className="text-sm font-semibold text-cordia-dark">Startup Support</h3>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
@@ -272,7 +265,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-sm font-semibold text-cordia-dark">VC Matching</h3>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
@@ -283,7 +276,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-sm font-semibold text-cordia-dark">Internship Programs</h3>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
                   <img 
@@ -296,7 +289,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
+
           <div className="text-center mt-12">
             <Link href="/initiatives">
               <Button className="bg-cordia-blue text-white hover:bg-blue-600 px-8 py-3 text-lg font-medium" data-testid="button-view-all-initiatives">
@@ -318,7 +311,7 @@ export default function Home() {
               Stay updated with the latest developments, announcements, and insights from CordiaEC.
             </p>
           </div>
-          
+
           <div className="max-w-4xl mx-auto">
             <Card className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="overflow-x-auto">
@@ -354,7 +347,7 @@ export default function Home() {
                 </table>
               </div>
             </Card>
-            
+
             <div className="text-center mt-8">
               <Link href="/news">
                 <Button className="bg-cordia-blue text-white hover:bg-blue-600" data-testid="button-view-all-news">
@@ -370,7 +363,7 @@ export default function Home() {
       <section className="py-20 bg-gradient-to-r from-cordia-teal to-cordia-green">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            
+
             {/* Text Content */}
             <div className="text-center lg:text-left order-2 lg:order-1">
               <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6" data-testid="text-cta-title">
@@ -389,36 +382,36 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
-            
+
             {/* CTA Image */}
             <div className="order-1 lg:order-2">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                  src="https://plus.unsplash.com/premium_photo-1727730015669-aac64afb50ad?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
                   alt="Business team collaboration and global partnerships" 
                   className="w-full h-80 object-cover rounded-3xl shadow-2xl"
                   data-testid="img-cta-collaboration"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-3xl"></div>
-                
+
                 {/* Overlay text */}
                 <div className="absolute bottom-6 left-6 text-white">
                   <p className="text-sm font-medium opacity-90">
-                    Join 500+ organizations worldwide
+                    Join leading experts in Korean Studies
                   </p>
                   <p className="text-xs opacity-75 mt-1">
-                    Building bridges across continents
+                    Empowering global business with deep cultural insight and networks
                   </p>
                 </div>
               </div>
             </div>
-            
+
           </div>
         </div>
       </section>
 
       {/* Modals */}
-      
+
       <NewsModal 
         open={newsModalOpen}
         onOpenChange={setNewsModalOpen}

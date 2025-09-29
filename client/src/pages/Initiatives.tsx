@@ -11,26 +11,26 @@ const initiatives: Initiative[] = [
     id: "1",
     slug: "k-food",
     title: "K-Food Initiative",
-    description: "Connecting Korean food brands with global buyers and distribution channels for international market expansion.",
-    content: "The K-Food Initiative is designed to bridge the gap between innovative Korean food brands and international markets. Our comprehensive program provides market research, regulatory compliance support, distribution channel development, and strategic partnerships to help Korean food companies successfully expand globally. We work with local distributors, retailers, and food service providers to create sustainable market entry strategies.",
-    imageUrl: "https://images.unsplash.com/photo-1567306301408-e75d5e8e9fc7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    description: "Showcasing Korean cuisine as a cultural brand with strategic market insights.",
+    content: "We analyze the success factors of entering global food markets through deep cultural understanding of Korean cuisine. By working with local distributors and international partners, we provide tailored strategies that turn Korean food businesses into sustainable global players. Our support covers everything from market entry planning to long-term brand positioning.",
+    imageUrl: "https://images.unsplash.com/photo-1590301157890-4810ed352733?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     category: "Food & Beverage"
   },
   {
     id: "2",
     slug: "k-beauty",
     title: "K-Beauty Initiative",
-    description: "Empowering K-Beauty brands to certify and launch in overseas markets with comprehensive market entry support.",
-    content: "Our K-Beauty Initiative provides comprehensive support for Korean beauty brands looking to enter international markets. We offer regulatory guidance, certification support, market analysis, and partnership development to ensure successful market entry and sustainable growth in the global beauty industry.",
-    imageUrl: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200",
+    description: "Positioning K-Beauty as a global lifestyle movement, not just a product.",
+    content: "We guide Korean beauty brands with market analysis, certification support, and brand positioning rooted in cultural context. Through partnerships with international retailers and influencers, we ensure confident and effective entry into the global beauty industry. Our expertise enables brands to scale sustainably while preserving their unique Korean identity.",
+    imageUrl: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400",
     category: "Beauty & Cosmetics"
   },
   {
     id: "3",
     slug: "startups",
     title: "Startups Program",
-    description: "Mentoring and funding diaspora-led startups for global expansion with strategic partnership opportunities.",
-    content: "The Startups Program focuses on supporting diaspora-led startups with mentoring, funding opportunities, and strategic partnerships. We provide access to global networks, investor connections, and market development resources to help innovative startups scale internationally.",
+    description: "Connecting diaspora-led startups with Korea’s expertise and global expansion networks.",
+    content: "We mentor and support startups by linking them to global networks, investors, and expert advisors. Our program provides concrete pathways—from idea validation to cross-border scaling—so that diaspora-led ventures can thrive internationally with confidence. In addition, we facilitate connections with Korean Studies experts who add cultural depth to innovation.",
     imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200",
     category: "Technology & Innovation"
   },
@@ -38,8 +38,8 @@ const initiatives: Initiative[] = [
     id: "4",
     slug: "vc-matching",
     title: "VC Matching",
-    description: "Bridging innovative companies with top international venture capital for strategic investment opportunities.",
-    content: "Our VC Matching program connects innovative companies with leading international venture capital firms. We facilitate strategic investment opportunities through our extensive network of investors, providing companies with access to capital, expertise, and global market opportunities.",
+    description: "Bridging Korean ventures with top-tier global investors through trusted partnerships.",
+    content: "We match innovative companies with venture capital firms worldwide, supported by our established networks in Korea and abroad. By combining cultural insight with investor expertise, we create effective and sustainable investment opportunities across borders. Our platform reduces friction in cross-border investment and accelerates deal-making.",
     imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
     category: "Investment & Finance"
   },
@@ -47,18 +47,18 @@ const initiatives: Initiative[] = [
     id: "5",
     slug: "internships",
     title: "Internships Program",
-    description: "Offering cross-border internship opportunities for Korean diaspora youth in international organizations.",
-    content: "The Internships Program creates valuable cross-border internship opportunities for Korean diaspora youth in leading international organizations. We partner with global companies, NGOs, and government agencies to provide meaningful work experiences that build career foundations and cultural bridges.",
+    description: "Empowering next-generation leaders through cross-border career experiences.",
+    content: "We provide Korean diaspora youth with direct access to meaningful internships in international organizations. Backed by our partnerships with universities, NGOs, and enterprises, we deliver hands-on opportunities that build careers and cultural bridges. These experiences cultivate global perspectives and strengthen professional readiness.",
     imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200",
     category: "Education & Development"
   },
   {
     id: "6",
     slug: "forums",
-    title: "Knowledge Forums",
-    description: "Fostering knowledge exchange through online and offline seminars & forums for industry collaboration.",
-    content: "Our Knowledge Forums facilitate meaningful knowledge exchange through both online and offline seminars, conferences, and collaborative forums. These platforms bring together industry leaders, researchers, and innovators to share insights, discuss trends, and develop collaborative solutions to global challenges.",
-    imageUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+    title: "Global Submit",
+    description: "A global stage where Korean Studies meets international collaboration.",
+    content: "We host forums and conferences that gather scholars, business leaders, and policymakers to exchange knowledge and strategies. These summits turn cultural expertise into actionable solutions for global challenges, positioning Cordia as a trusted convener. Each event amplifies Korea’s role in fostering dialogue and global partnership.",
+    imageUrl: "https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400",
     category: "Knowledge & Collaboration"
   }
 ];
