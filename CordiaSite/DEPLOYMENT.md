@@ -4,23 +4,11 @@
 
 ## 🚀 외부 배포 단계별 가이드
 
-### 단계 1: GitHub Clone 후 즉시 자동 정리 (필수)
-
-GitHub에서 clone한 **즉시** 다음 자동화 스크립트를 실행하세요:
+### 단계 1: 의존성 설치
 
 ```bash
-# ⚠️ npm install 하기 전에 먼저 실행!
-node prepare-for-deployment.js
+npm install
 ```
-
-이 스크립트가 다음 작업을 자동으로 수행합니다:
-- ✅ 파일 백업 생성 (package.json.backup, vite.config.ts.backup)
-- ✅ Replit 패키지 제거 (package.json에서)
-- ✅ vite.config.ts에서 Replit import 제거
-- ✅ node_modules 정리 및 깨끗한 재설치
-- ✅ 빌드 테스트
-
-**완료되면 "✅ 외부 배포 준비 완료!" 메시지가 표시됩니다.**
 
 ### 단계 2: Supabase 데이터베이스 설정
 
@@ -57,11 +45,6 @@ DATABASE_URL=postgresql://postgres:YOUR_ACTUAL_PASSWORD@aws-0-[REGION].pooler.su
 # 애플리케이션 설정
 NODE_ENV=production
 PORT=5000
-```
-
-**예시**:
-```env
-DATABASE_URL=postgresql://postgres:mySecurePassword123@aws-0-us-west-1.pooler.supabase.com:6543/postgres
 ```
 
 ### 단계 4: 데이터베이스 스키마 생성
@@ -116,15 +99,6 @@ npm run db:push
 
 ## 🔧 문제 해결
 
-### 자동화 스크립트 실패
-```bash
-# 백업에서 복원
-node restore-from-backup.js
-
-# 다시 시도
-node prepare-for-deployment.js
-```
-
 ### 데이터베이스 연결 오류
 - DATABASE_URL이 올바르게 설정되었는지 확인
 - Supabase 프로젝트가 활성 상태인지 확인
@@ -132,16 +106,7 @@ node prepare-for-deployment.js
 
 ### 빌드 오류
 - Node.js 버전 확인 (18+ 권장)
-- 자동화 스크립트가 성공적으로 실행되었는지 확인
 - 환경변수가 올바르게 설정되었는지 확인
-
-## 📋 중요 파일들
-
-자동화 스크립트가 생성하는 백업 파일들:
-- `package.json.backup` - 원본 package.json
-- `vite.config.ts.backup` - 원본 vite.config.ts
-
-⚠️ **이 백업 파일들을 GitHub에 커밋하지 마세요!**
 
 ## 📞 추가 지원
 
