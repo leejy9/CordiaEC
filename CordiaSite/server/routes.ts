@@ -104,4 +104,42 @@ export function registerRoutes(app: Express): void {
       });
     }
   });
+
+  app.get("/api/history", async (req, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const result = await storage.getHistoryPosts(page, limit);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching history posts:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch history posts",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  app.get("/api/history/:id", async (req, res) => {
+    try {
+      const post = await storage.getHistoryPost(req.params.id);
+      if (!post) {
+        res.status(404).json({
+          success: false,
+          message: "History post not found"
+        });
+        return;
+      }
+
+      res.json({ success: true, post });
+    } catch (error) {
+      console.error("Error fetching history post:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch history post",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
 }

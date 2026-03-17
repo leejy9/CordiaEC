@@ -9,6 +9,9 @@ import About from "@/pages/About";
 import Initiatives from "@/pages/Initiatives";
 import News from "@/pages/News";
 import Contact from "@/pages/Contact";
+import History from "@/pages/History";
+import AdminLogin from "@/pages/admin/AdminLogin";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
 
 function Router() {
   return (
@@ -16,8 +19,11 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/initiatives" component={Initiatives} />
+      <Route path="/history" component={History} />
       <Route path="/news" component={News} />
       <Route path="/contact" component={Contact} />
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

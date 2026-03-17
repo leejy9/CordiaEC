@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -41,6 +41,20 @@ export const initiatives = pgTable("initiatives", {
   category: text("category").notNull(),
 });
 
+export const historyPosts = pgTable("history_posts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  summary: text("summary").notNull(),
+  content: text("content").notNull(),
+  eventDate: timestamp("event_date").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  linkUrl: text("link_url"),
+  isPublished: boolean("is_published").default(true).notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertContactSchema = createInsertSchema(contacts).omit({
   id: true,
   createdAt: true,
@@ -58,6 +72,12 @@ export const insertInitiativeSchema = createInsertSchema(initiatives).omit({
   id: true,
 });
 
+export const insertHistoryPostSchema = createInsertSchema(historyPosts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type Contact = typeof contacts.$inferSelect;
 
@@ -69,3 +89,6 @@ export type NewsArticle = typeof newsArticles.$inferSelect;
 
 export type InsertInitiative = z.infer<typeof insertInitiativeSchema>;
 export type Initiative = typeof initiatives.$inferSelect;
+
+export type InsertHistoryPost = z.infer<typeof insertHistoryPostSchema>;
+export type HistoryPost = typeof historyPosts.$inferSelect;

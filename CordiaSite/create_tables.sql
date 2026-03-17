@@ -39,3 +39,18 @@ CREATE TABLE IF NOT EXISTS "research_papers" (
   "downloads" integer DEFAULT 0 NOT NULL,
   "author" text NOT NULL
 );
+
+-- Create history_posts table
+CREATE TABLE IF NOT EXISTS "history_posts" (
+  "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+  "title" text NOT NULL,
+  "summary" text NOT NULL,
+  "content" text NOT NULL,
+  "event_date" timestamp NOT NULL,
+  "thumbnail_url" text,
+  "link_url" text,
+  "is_published" boolean DEFAULT true NOT NULL,
+  "sort_order" integer DEFAULT 0 NOT NULL,
+  "created_at" timestamp DEFAULT now() NOT NULL,
+  "updated_at" timestamp DEFAULT now() NOT NULL
+);

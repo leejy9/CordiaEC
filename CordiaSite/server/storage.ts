@@ -1,4 +1,4 @@
-import { type Contact, type InsertContact, type ResearchPaper, type NewsArticle, type Initiative, contacts, newsArticles, initiatives, researchPapers } from "../shared/schema.ts";
+import { type Contact, type InsertContact, type ResearchPaper, type NewsArticle, type Initiative, type HistoryPost, contacts, newsArticles, initiatives, researchPapers, historyPosts } from "../shared/schema.ts";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { eq, desc, sql, count } from "drizzle-orm";
@@ -20,6 +20,10 @@ export interface IStorage {
   // Initiatives
   getInitiatives(): Promise<Initiative[]>;
   getInitiative(slug: string): Promise<Initiative | undefined>;
+
+  // History
+  getHistoryPosts(page?: number, limit?: number): Promise<{ posts: HistoryPost[], total: number }>;
+  getHistoryPost(id: string): Promise<HistoryPost | undefined>;
 }
 
 // PostgreSQL Storage Implementation
@@ -107,6 +111,26 @@ class PostgreSQLStorage implements IStorage {
   async getInitiative(slug: string): Promise<Initiative | undefined> {
     const db = this.getDb();
     const result = await db.select().from(initiatives).where(eq(initiatives.slug, slug));
+    return result[0];
+  }
+
+  async getHistoryPosts(page = 1, limit = 10): Promise<{ posts: HistoryPost[], total: number }> {
+    const db = this.getDb();
+    const offset = (page - 1) * limit;
+    const posts = await db.select().from(historyPosts)
+      .orderBy(historyPosts.sortOrder, desc(historyPosts.eventDate))
+      .limit(limit)
+      .offset(offset);
+
+    const totalResult = await db.select({ count: count() }).from(historyPosts);
+    const total = totalResult[0].count || 0;
+
+    return { posts, total };
+  }
+
+  async getHistoryPost(id: string): Promise<HistoryPost | undefined> {
+    const db = this.getDb();
+    const result = await db.select().from(historyPosts).where(eq(historyPosts.id, id));
     return result[0];
   }
 }

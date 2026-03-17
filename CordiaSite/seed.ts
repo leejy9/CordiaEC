@@ -1,7 +1,7 @@
 import "dotenv/config";
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
-import { contacts, newsArticles, initiatives, researchPapers } from "./shared/schema";
+import { contacts, newsArticles, initiatives, researchPapers, historyPosts } from "./shared/schema";
 import { eq } from "drizzle-orm";
 
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -23,6 +23,7 @@ async function seed() {
     await db.delete(newsArticles);
     await db.delete(initiatives);
     await db.delete(researchPapers);
+    await db.delete(historyPosts);
 
     // Insert seed data - Contacts
     console.log("📧 Seeding contacts...");
@@ -151,6 +152,47 @@ async function seed() {
       },
     ]);
 
+    // Insert seed data - History Posts
+    console.log("🗂️ Seeding history posts...");
+    await db.insert(historyPosts).values([
+      {
+        title: "CordiaEC launched cross-border collaboration program",
+        summary: "The team formalized its first international collaboration roadmap with partner institutions in Korea and overseas.",
+        content:
+          "CordiaEC officially launched a cross-border collaboration program to connect researchers, startups, and public-sector partners. The initiative established the operating framework for future exchanges, pilot projects, and publication support.",
+        eventDate: new Date("2023-09-05"),
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
+        linkUrl: "https://cordia-ec.vercel.app/about",
+        isPublished: true,
+        sortOrder: 1,
+      },
+      {
+        title: "Global startup roundtable held in Incheon",
+        summary: "CordiaEC hosted a roundtable focused on market entry strategy, diaspora networks, and funding access.",
+        content:
+          "The roundtable brought together startup founders, investors, and academic partners to discuss practical market-entry strategy. Sessions covered ecosystem mapping, international founder support, and follow-up partnership opportunities for early-stage teams.",
+        eventDate: new Date("2024-01-18"),
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
+        linkUrl: "https://cordia-ec.vercel.app/initiatives",
+        isPublished: true,
+        sortOrder: 2,
+      },
+      {
+        title: "2024 K-Beauty strategy briefing published",
+        summary: "A new briefing summarized market signals, branding recommendations, and partnership opportunities for K-Beauty firms.",
+        content:
+          "CordiaEC published a strategy briefing covering regional demand shifts, channel trends, and partnership opportunities for K-Beauty brands. The report was designed as a practical guide for companies preparing for cross-border expansion.",
+        eventDate: new Date("2024-03-10"),
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=80",
+        linkUrl: "https://cordia-ec.vercel.app/news",
+        isPublished: true,
+        sortOrder: 3,
+      },
+    ]);
+
     // Insert seed data - Research Papers
     console.log("📚 Seeding research papers...");
     await db.insert(researchPapers).values([
@@ -184,6 +226,7 @@ async function seed() {
     console.log("  - 4 news articles");
     console.log("  - 6 initiatives");
     console.log("  - 2 research papers");
+    console.log("  - 3 history posts");
 
     await sql.end();
   } catch (error) {

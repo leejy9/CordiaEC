@@ -17,6 +17,7 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
     { name: 'Initiatives', href: '/initiatives' },
+    { name: 'History', href: '/history' },
     { name: 'News', href: '/news' },
     { name: 'Contact', href: '/contact' },
   ];
