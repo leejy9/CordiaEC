@@ -65,7 +65,9 @@ if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
   })();
 } else {
   // In Vercel (Production serverless), we just need to register routes
-  registerRoutes(app);
+  registerRoutes(app).catch(err => {
+    console.error("Failed to register routes:", err);
+  });
 }
 
 export default app;

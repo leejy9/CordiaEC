@@ -19,9 +19,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           errors: error.errors 
         });
       } else {
+        console.error("Error creating contact:", error);
         res.status(500).json({ 
           success: false, 
-          message: "Failed to submit contact form" 
+          message: "Failed to submit contact form",
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     }
@@ -36,9 +38,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await storage.getNewsArticles(page, limit);
       res.json(result);
     } catch (error) {
+      console.error("Error fetching news articles:", error);
       res.status(500).json({ 
         success: false, 
-        message: "Failed to fetch news articles" 
+        message: "Failed to fetch news articles",
+        error: error instanceof Error ? error.message : String(error)
       });
     }
   });
@@ -56,9 +60,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ success: true, article });
     } catch (error) {
+      console.error("Error fetching news article:", error);
       res.status(500).json({ 
         success: false, 
-        message: "Failed to fetch news article" 
+        message: "Failed to fetch news article",
+        error: error instanceof Error ? error.message : String(error)
       });
     }
   });
@@ -69,9 +75,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const initiatives = await storage.getInitiatives();
       res.json({ success: true, initiatives });
     } catch (error) {
+      console.error("Error fetching initiatives:", error);
       res.status(500).json({ 
         success: false, 
-        message: "Failed to fetch initiatives" 
+        message: "Failed to fetch initiatives",
+        error: error instanceof Error ? error.message : String(error)
       });
     }
   });
@@ -89,9 +97,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ success: true, initiative });
     } catch (error) {
+      console.error("Error fetching initiative:", error);
       res.status(500).json({ 
         success: false, 
-        message: "Failed to fetch initiative" 
+        message: "Failed to fetch initiative",
+        error: error instanceof Error ? error.message : String(error)
       });
     }
   });

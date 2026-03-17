@@ -27,7 +27,11 @@ class PostgreSQLStorage implements IStorage {
   private db;
 
   constructor() {
-    const sql = postgres(process.env.DATABASE_URL!);
+    const databaseUrl = process.env.DATABASE_URL;
+    if (!databaseUrl) {
+      throw new Error("DATABASE_URL environment variable is not set. Please configure it in Vercel or your .env file.");
+    }
+    const sql = postgres(databaseUrl);
     this.db = drizzle(sql);
   }
 
