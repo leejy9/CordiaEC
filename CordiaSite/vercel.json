@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "buildCommand": "vite build && esbuild server/index.ts --platform=node --bundle --format=esm --outfile=dist/index.js",
+  "outputDirectory": "dist/public",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
