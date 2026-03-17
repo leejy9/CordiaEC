@@ -58,8 +58,7 @@ if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
 
     server.listen({
       port,
-      host: "0.0.0.0",
-      reusePort: true,
+      host: "localhost",
     }, () => {
       log(`serving on port ${port}`);
     });
