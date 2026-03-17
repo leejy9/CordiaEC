@@ -24,74 +24,89 @@ export interface IStorage {
 
 // PostgreSQL Storage Implementation
 class PostgreSQLStorage implements IStorage {
-  private db;
+  private db: ReturnType<typeof drizzle> | null = null;
 
-  constructor() {
+  private getDb() {
+    if (this.db) {
+      return this.db;
+    }
+
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
       throw new Error("DATABASE_URL environment variable is not set. Please configure it in Vercel or your .env file.");
     }
+
     const sql = postgres(databaseUrl);
     this.db = drizzle(sql);
+    return this.db;
   }
 
   async createContact(insertContact: InsertContact): Promise<Contact> {
-    const [contact] = await this.db.insert(contacts).values(insertContact).returning();
+    const db = this.getDb();
+    const [contact] = await db.insert(contacts).values(insertContact).returning();
     return contact;
   }
 
   async getContacts(): Promise<Contact[]> {
-    return await this.db.select().from(contacts).orderBy(desc(contacts.createdAt));
+    const db = this.getDb();
+    return await db.select().from(contacts).orderBy(desc(contacts.createdAt));
   }
 
   async getResearchPapers(page = 1, limit = 10): Promise<{ papers: ResearchPaper[], total: number }> {
+    const db = this.getDb();
     const offset = (page - 1) * limit;
-    const papers = await this.db.select().from(researchPapers)
+    const papers = await db.select().from(researchPapers)
       .orderBy(desc(researchPapers.publishedDate))
       .limit(limit)
       .offset(offset);
     
-    const totalResult = await this.db.select({ count: count() }).from(researchPapers);
+    const totalResult = await db.select({ count: count() }).from(researchPapers);
     const total = totalResult[0].count || 0;
     
     return { papers, total };
   }
 
   async getResearchPaper(id: string): Promise<ResearchPaper | undefined> {
-    const result = await this.db.select().from(researchPapers).where(eq(researchPapers.id, id));
+    const db = this.getDb();
+    const result = await db.select().from(researchPapers).where(eq(researchPapers.id, id));
     return result[0];
   }
 
   async incrementResearchPaperViews(id: string): Promise<void> {
-    await this.db.update(researchPapers)
+    const db = this.getDb();
+    await db.update(researchPapers)
       .set({ views: sql`${researchPapers.views} + 1` })
       .where(eq(researchPapers.id, id));
   }
 
   async getNewsArticles(page = 1, limit = 10): Promise<{ articles: NewsArticle[], total: number }> {
+    const db = this.getDb();
     const offset = (page - 1) * limit;
-    const articles = await this.db.select().from(newsArticles)
+    const articles = await db.select().from(newsArticles)
       .orderBy(desc(newsArticles.publishedDate))
       .limit(limit)
       .offset(offset);
     
-    const totalResult = await this.db.select({ count: count() }).from(newsArticles);
+    const totalResult = await db.select({ count: count() }).from(newsArticles);
     const total = totalResult[0].count || 0;
     
     return { articles, total };
   }
 
   async getNewsArticle(id: string): Promise<NewsArticle | undefined> {
-    const result = await this.db.select().from(newsArticles).where(eq(newsArticles.id, id));
+    const db = this.getDb();
+    const result = await db.select().from(newsArticles).where(eq(newsArticles.id, id));
     return result[0];
   }
 
   async getInitiatives(): Promise<Initiative[]> {
-    return await this.db.select().from(initiatives);
+    const db = this.getDb();
+    return await db.select().from(initiatives);
   }
 
   async getInitiative(slug: string): Promise<Initiative | undefined> {
-    const result = await this.db.select().from(initiatives).where(eq(initiatives.slug, slug));
+    const db = this.getDb();
+    const result = await db.select().from(initiatives).where(eq(initiatives.slug, slug));
     return result[0];
   }
 }
