@@ -1,10 +1,9 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
-import { storage } from "./storage";
-import { insertContactSchema } from "@shared/schema";
+import { storage } from "./storage.ts";
+import { insertContactSchema } from "../shared/schema.ts";
 import { z } from "zod";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export function registerRoutes(app: Express): void {
   // Contact form submission
   app.post("/api/contacts", async (req, res) => {
     try {
@@ -105,7 +104,4 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-
-  const httpServer = createServer(app);
-  return httpServer;
 }

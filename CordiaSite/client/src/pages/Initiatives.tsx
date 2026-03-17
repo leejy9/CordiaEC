@@ -10,7 +10,7 @@ export default function Initiatives() {
   const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { data: initiativesData, isLoading } = useQuery({
+  const { data: initiativesData, isLoading, error } = useQuery({
     queryKey: ["/api/initiatives"],
     queryFn: async () => {
       const response = await fetch(`/api/initiatives`);
@@ -39,6 +39,25 @@ export default function Initiatives() {
             </div>
           </div>
         </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl mx-auto text-center bg-red-50 rounded-2xl border border-red-100 p-10">
+              <h1 className="text-4xl sm:text-5xl font-bold text-cordia-dark mb-6">
+                Our Initiatives
+              </h1>
+              <p className="text-lg text-red-600">
+                Failed to load initiatives. Please check the API deployment and database connection.
+              </p>
+            </div>
+          </div>
+        </section>
       </Layout>
     );
   }

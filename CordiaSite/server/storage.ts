@@ -1,4 +1,4 @@
-import { type Contact, type InsertContact, type ResearchPaper, type NewsArticle, type Initiative, contacts, newsArticles, initiatives, researchPapers } from "@shared/schema";
+import { type Contact, type InsertContact, type ResearchPaper, type NewsArticle, type Initiative, contacts, newsArticles, initiatives, researchPapers } from "../shared/schema.ts";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { eq, desc, sql, count } from "drizzle-orm";
