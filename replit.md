@@ -34,20 +34,29 @@ The server uses Express.js with TypeScript, following a RESTful API design:
 The application uses Supabase PostgreSQL with the following main entities:
 
 - **contacts**: User inquiries with name, email, message, and timestamps
-- **news_articles**: Content with title, content, excerpt, imageUrl, linkUrl, and publication dates
+- **news_articles**: Content with title, content, excerpt, imageUrl, linkUrl, publication dates, and an optional `category` (initiative slug) used to attach a news item to an initiative detail page
 - **research_papers**: Academic content with view/download tracking
-- **initiatives**: Program info (K-Food, K-Beauty, Startups, VC Matching, Internships, Forums) with slugs, categories, linkUrl, publishedDate, and rich content
+- **initiatives** (legacy table; not surfaced in the UI): Initiative content is now hardcoded in `client/src/lib/initiativesData.ts`. Each initiative detail page renders the hardcoded hero plus all news where `news_articles.category === slug`.
 - **overseas_korean_posts**: K-Diaspora board with title, content, excerpt, imageUrl, linkUrl, publishedDate
 - **UUID Primary Keys**: All tables use UUID primary keys
 
 ## Admin Panel
 
-Password-protected admin panel at `/admin` (password: `cordia2025`) allows managing all 3 content boards:
-- **News**: Create/Edit/Delete news articles with image file upload
-- **Initiatives**: Create/Edit/Delete with toggle selector for 6 initiative types
+Password-protected admin panel at `/admin` (password: `cordia2025`) with two boards:
+- **News**: Create/Edit/Delete news articles with image upload and an initiative-category toggle (None + 6 initiative slugs)
 - **K-Diaspora**: Create/Edit/Delete overseas Korean community posts
 
+There is no separate Initiatives admin tab — initiative content is code-driven; choose a category on a news article to surface it on that initiative's page.
+
 Images are stored as base64 data URLs in the database.
+
+## List Pages (News, K-Diaspora)
+
+Both list pages support:
+- Title/excerpt search (News uses backend `?search=`; K-Diaspora filters client-side after fetching)
+- Per-page selector (10 / 20 / 50)
+- Numbered pagination with previous/next and ellipsis for long page ranges
+- Tall rows (~140px) with w-40 h-28 thumbnails and 2-line excerpts
 
 ## Authentication and Authorization
 

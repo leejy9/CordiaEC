@@ -30,6 +30,7 @@ export const newsArticles = pgTable("news_articles", {
   publishedDate: timestamp("published_date").notNull(),
   imageUrl: text("image_url"),
   linkUrl: text("link_url"),
+  category: text("category"),
 });
 
 export const initiatives = pgTable("initiatives", {

@@ -28,18 +28,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Plus, Pencil, Trash2, Lock, Calendar, ExternalLink, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { NewsArticle, Initiative, OverseasKoreanPost } from "@shared/schema";
+import type { NewsArticle, OverseasKoreanPost } from "@shared/schema";
+import { INITIATIVE_DEFAULTS, INITIATIVE_SLUGS } from "@/lib/initiativesData";
 
 const ADMIN_PASSWORD = "cordia2025";
-
-const INITIATIVE_TYPES = [
-  { slug: "k-food", label: "K-Food", category: "Food & Beverage" },
-  { slug: "k-beauty", label: "K-Beauty", category: "Beauty & Cosmetics" },
-  { slug: "startups", label: "Startups", category: "Technology & Innovation" },
-  { slug: "vc-matching", label: "VC Matching", category: "Investment & Finance" },
-  { slug: "internships", label: "Internships", category: "Education & Development" },
-  { slug: "forums", label: "Knowledge Forums", category: "Knowledge & Collaboration" },
-];
 
 // ---- Shared Image Upload Component ----
 function ImageUpload({
@@ -93,7 +85,7 @@ function ImageUpload({
   );
 }
 
-// ---- Shared Form Fields (used by all 3 boards) ----
+// ---- Shared Form Fields ----
 interface CommonForm {
   title: string;
   excerpt: string;
@@ -194,13 +186,17 @@ function LoginGate({ onLogin }: { onLogin: () => void }) {
 }
 
 // ---- News Tab ----
+interface NewsForm extends CommonForm {
+  category: string;
+}
+
 function NewsTab() {
   const { toast } = useToast();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<NewsArticle | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const defaultForm: CommonForm = { title: "", excerpt: "", content: "", imageUrl: "", linkUrl: "", publishedDate: new Date().toISOString().split("T")[0] };
-  const [form, setForm] = useState<CommonForm>(defaultForm);
+  const defaultForm: NewsForm = { title: "", excerpt: "", content: "", imageUrl: "", linkUrl: "", publishedDate: new Date().toISOString().split("T")[0], category: "" };
+  const [form, setForm] = useState<NewsForm>(defaultForm);
 
   const { data, isLoading } = useQuery({
     queryKey: ["/api/news", 1, 100],
@@ -213,8 +209,9 @@ function NewsTab() {
     setEditing(a);
     setForm({
       title: a.title, excerpt: a.excerpt, content: a.content,
-      imageUrl: a.imageUrl || "", linkUrl: (a as any).linkUrl || "",
+      imageUrl: a.imageUrl || "", linkUrl: a.linkUrl || "",
       publishedDate: new Date(a.publishedDate).toISOString().split("T")[0],
+      category: a.category || "",
     });
     setFormOpen(true);
   };
@@ -225,6 +222,7 @@ function NewsTab() {
         title: form.title, excerpt: form.excerpt, content: form.content,
         imageUrl: form.imageUrl || null, linkUrl: form.linkUrl || null,
         publishedDate: new Date(form.publishedDate).toISOString(),
+        category: form.category || null,
       };
       const url = editing ? `/api/news/${editing.id}` : "/api/news";
       const res = await fetch(url, { method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
@@ -244,157 +242,34 @@ function NewsTab() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-cordia-dark">뉴스 <Badge variant="secondary">{articles.length}</Badge></h2>
-        <Button onClick={openCreate} className="bg-cordia-teal hover:bg-cordia-green text-white"><Plus className="w-4 h-4 mr-2" />새 글</Button>
+        <Button onClick={openCreate} className="bg-cordia-teal hover:bg-cordia-green text-white" data-testid="button-new-news"><Plus className="w-4 h-4 mr-2" />새 글</Button>
       </div>
       {isLoading ? <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)}</div>
         : articles.length === 0 ? <div className="text-center py-16 text-gray-400">아직 게시글이 없습니다.</div>
         : (
           <div className="space-y-3">
-            {articles.map(a => (
-              <Card key={a.id} className="border border-gray-100">
-                <CardContent className="p-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {a.imageUrl && <img src={a.imageUrl} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />}
-                    <div className="min-w-0">
-                      <p className="font-semibold text-cordia-dark truncate">{a.title}</p>
-                      <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
-                        <Calendar className="w-3 h-3" />{new Date(a.publishedDate).toLocaleDateString()}
-                        {(a as any).linkUrl && <span className="flex items-center gap-1 text-cordia-teal"><ExternalLink className="w-3 h-3" />링크 있음</span>}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <Button variant="outline" size="sm" onClick={() => openEdit(a)}><Pencil className="w-4 h-4" /></Button>
-                    <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600" onClick={() => setDeleteTarget(a.id)}><Trash2 className="w-4 h-4" /></Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editing ? "뉴스 수정" : "새 뉴스 등록"}</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-2">
-            <CommonFields form={form} setForm={setForm} />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setFormOpen(false)}>취소</Button>
-            <Button className="bg-cordia-teal hover:bg-cordia-green text-white" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending || !isCommonFormValid(form)}>
-              {saveMutation.isPending ? "저장 중..." : "저장"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <AlertDialog open={!!deleteTarget} onOpenChange={open => !open && setDeleteTarget(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader><AlertDialogTitle>삭제하시겠습니까?</AlertDialogTitle><AlertDialogDescription>이 작업은 되돌릴 수 없습니다.</AlertDialogDescription></AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget)}>삭제</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  );
-}
-
-// ---- Initiatives Tab ----
-interface InitForm extends CommonForm {
-  selectedType: string;
-}
-
-function InitiativesTab() {
-  const { toast } = useToast();
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<Initiative | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const defaultForm: InitForm = { selectedType: "", title: "", excerpt: "", content: "", imageUrl: "", linkUrl: "", publishedDate: new Date().toISOString().split("T")[0] };
-  const [form, setForm] = useState<InitForm>(defaultForm);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["/api/initiatives"],
-    queryFn: async () => (await fetch("/api/initiatives")).json(),
-  });
-  const items: Initiative[] = data?.initiatives || [];
-
-  const openCreate = () => { setForm(defaultForm); setEditing(null); setFormOpen(true); };
-  const openEdit = (item: Initiative) => {
-    setEditing(item);
-    const typeMatch = INITIATIVE_TYPES.find(t => t.slug === item.slug);
-    setForm({
-      selectedType: typeMatch?.slug || "",
-      title: item.title,
-      excerpt: item.description,
-      content: item.content,
-      imageUrl: item.imageUrl || "",
-      linkUrl: (item as any).linkUrl || "",
-      publishedDate: item.publishedDate ? new Date(item.publishedDate).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
-    });
-    setFormOpen(true);
-  };
-
-  const selectedTypeInfo = INITIATIVE_TYPES.find(t => t.slug === form.selectedType);
-
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      if (!selectedTypeInfo) throw new Error("type required");
-      const payload = {
-        slug: selectedTypeInfo.slug,
-        category: selectedTypeInfo.category,
-        title: form.title,
-        description: form.excerpt,
-        content: form.content,
-        imageUrl: form.imageUrl || null,
-        linkUrl: form.linkUrl || null,
-        publishedDate: form.publishedDate ? new Date(form.publishedDate).toISOString() : null,
-      };
-      const url = editing ? `/api/initiatives/${editing.id}` : "/api/initiatives";
-      const res = await fetch(url, { method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error();
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/initiatives"] }); setFormOpen(false); toast({ title: editing ? "수정 완료" : "등록 완료" }); },
-    onError: () => toast({ title: "오류", description: "저장에 실패했습니다.", variant: "destructive" }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => { const res = await fetch(`/api/initiatives/${id}`, { method: "DELETE" }); if (!res.ok) throw new Error(); },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/initiatives"] }); setDeleteTarget(null); toast({ title: "삭제 완료" }); },
-    onError: () => toast({ title: "오류", description: "삭제에 실패했습니다.", variant: "destructive" }),
-  });
-
-  const isValid = !!(form.selectedType && form.title && form.excerpt && form.content && form.publishedDate);
-
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-cordia-dark">이니셔티브 <Badge variant="secondary">{items.length}</Badge></h2>
-        <Button onClick={openCreate} className="bg-cordia-teal hover:bg-cordia-green text-white"><Plus className="w-4 h-4 mr-2" />새 글</Button>
-      </div>
-      {isLoading ? <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)}</div>
-        : items.length === 0 ? <div className="text-center py-16 text-gray-400">아직 이니셔티브가 없습니다.</div>
-        : (
-          <div className="space-y-3">
-            {items.map(item => {
-              const typeInfo = INITIATIVE_TYPES.find(t => t.slug === item.slug);
+            {articles.map(a => {
+              const cat = a.category;
+              const catLabel = cat ? INITIATIVE_DEFAULTS[cat]?.label : null;
               return (
-                <Card key={item.id} className="border border-gray-100">
+                <Card key={a.id} className="border border-gray-100">
                   <CardContent className="p-4 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      {item.imageUrl && <img src={item.imageUrl} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />}
+                      {a.imageUrl && <img src={a.imageUrl} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />}
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold text-cordia-dark truncate">{item.title}</p>
-                          <Badge variant="outline" className="text-xs shrink-0">{typeInfo?.label || item.category}</Badge>
+                          <p className="font-semibold text-cordia-dark truncate">{a.title}</p>
+                          {catLabel && <Badge variant="outline" className="text-xs shrink-0 border-cordia-teal/30 text-cordia-teal">{catLabel}</Badge>}
                         </div>
-                        <p className="text-xs text-gray-400 truncate mt-0.5">{item.description}</p>
+                        <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
+                          <Calendar className="w-3 h-3" />{new Date(a.publishedDate).toLocaleDateString()}
+                          {a.linkUrl && <span className="flex items-center gap-1 text-cordia-teal"><ExternalLink className="w-3 h-3" />링크 있음</span>}
+                        </div>
                       </div>
                     </div>
                     <div className="flex gap-2 shrink-0">
-                      <Button variant="outline" size="sm" onClick={() => openEdit(item)}><Pencil className="w-4 h-4" /></Button>
-                      <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600" onClick={() => setDeleteTarget(item.id)}><Trash2 className="w-4 h-4" /></Button>
+                      <Button variant="outline" size="sm" onClick={() => openEdit(a)}><Pencil className="w-4 h-4" /></Button>
+                      <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600" onClick={() => setDeleteTarget(a.id)}><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -405,36 +280,48 @@ function InitiativesTab() {
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editing ? "이니셔티브 수정" : "새 이니셔티브 등록"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editing ? "뉴스 수정" : "새 뉴스 등록"}</DialogTitle></DialogHeader>
           <div className="space-y-4 py-2">
-            {/* Initiative Type Toggle */}
-            <div>
-              <Label>이니셔티브 유형 * <span className="text-xs text-gray-400">(하나 선택)</span></Label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {INITIATIVE_TYPES.map(type => (
-                  <button
-                    key={type.slug}
-                    type="button"
-                    onClick={() => setForm(f => ({ ...f, selectedType: type.slug }))}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                      form.selectedType === type.slug
-                        ? "bg-cordia-teal text-white border-cordia-teal shadow-sm"
-                        : "bg-white text-gray-600 border-gray-200 hover:border-cordia-teal hover:text-cordia-teal"
-                    }`}
-                  >
-                    {type.label}
-                  </button>
-                ))}
-              </div>
-              {form.selectedType && (
-                <p className="text-xs text-gray-400 mt-1">카테고리: {selectedTypeInfo?.category}</p>
-              )}
-            </div>
             <CommonFields form={form} setForm={setForm} />
+            <div>
+              <Label>이니셔티브 카테고리 <span className="text-xs text-gray-400">(선택, 해당 이니셔티브 페이지에 표시됨)</span></Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, category: "" }))}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                    form.category === ""
+                      ? "bg-gray-700 text-white border-gray-700"
+                      : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+                  }`}
+                  data-testid="button-category-none"
+                >
+                  없음
+                </button>
+                {INITIATIVE_SLUGS.map(slug => {
+                  const info = INITIATIVE_DEFAULTS[slug];
+                  return (
+                    <button
+                      key={slug}
+                      type="button"
+                      onClick={() => setForm(f => ({ ...f, category: slug }))}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                        form.category === slug
+                          ? "bg-cordia-teal text-white border-cordia-teal shadow-sm"
+                          : "bg-white text-gray-600 border-gray-200 hover:border-cordia-teal hover:text-cordia-teal"
+                      }`}
+                      data-testid={`button-category-${slug}`}
+                    >
+                      {info.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setFormOpen(false)}>취소</Button>
-            <Button className="bg-cordia-teal hover:bg-cordia-green text-white" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending || !isValid}>
+            <Button className="bg-cordia-teal hover:bg-cordia-green text-white" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending || !isCommonFormValid(form)}>
               {saveMutation.isPending ? "저장 중..." : "저장"}
             </Button>
           </DialogFooter>
@@ -586,14 +473,15 @@ export default function Admin() {
 
           <Tabs defaultValue="news">
             <TabsList className="mb-6">
-              <TabsTrigger value="news">뉴스</TabsTrigger>
-              <TabsTrigger value="initiatives">이니셔티브</TabsTrigger>
-              <TabsTrigger value="overseas">K-Diaspora</TabsTrigger>
+              <TabsTrigger value="news" data-testid="tab-news">뉴스</TabsTrigger>
+              <TabsTrigger value="overseas" data-testid="tab-overseas">K-Diaspora</TabsTrigger>
             </TabsList>
             <TabsContent value="news"><NewsTab /></TabsContent>
-            <TabsContent value="initiatives"><InitiativesTab /></TabsContent>
             <TabsContent value="overseas"><OverseasKoreanTab /></TabsContent>
           </Tabs>
+          <p className="text-xs text-gray-400 mt-6">
+            이니셔티브는 코드에 고정되어 있습니다. 뉴스를 작성할 때 카테고리를 지정하면 해당 이니셔티브 페이지에 자동으로 표시됩니다.
+          </p>
         </div>
       </div>
     </Layout>

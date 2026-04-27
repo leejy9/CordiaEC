@@ -35,7 +35,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const result = await storage.getNewsArticles(page, limit);
+      const category = (req.query.category as string) || undefined;
+      const search = (req.query.search as string) || undefined;
+      const result = await storage.getNewsArticles(page, limit, category, search);
       res.json(result);
     } catch (error) {
       console.error("News fetch error:", error);
@@ -166,7 +168,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const result = await storage.getOverseasKoreanPosts(page, limit);
+      const search = (req.query.search as string) || undefined;
+      const result = await storage.getOverseasKoreanPosts(page, limit, search);
       res.json(result);
     } catch (error) {
       res.status(500).json({ success: false, message: "Failed to fetch posts" });

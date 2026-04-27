@@ -22,7 +22,7 @@ export interface IStorage {
   incrementResearchPaperViews(id: string): Promise<void>;
 
   // News Articles
-  getNewsArticles(page?: number, limit?: number): Promise<{ articles: NewsArticle[], total: number }>;
+  getNewsArticles(page?: number, limit?: number, category?: string, search?: string): Promise<{ articles: NewsArticle[], total: number }>;
   getNewsArticle(id: string): Promise<NewsArticle | undefined>;
   createNewsArticle(article: InsertNewsArticle): Promise<NewsArticle>;
   updateNewsArticle(id: string, article: Partial<InsertNewsArticle>): Promise<NewsArticle | undefined>;
@@ -36,7 +36,7 @@ export interface IStorage {
   deleteInitiative(id: string): Promise<void>;
 
   // Overseas Korean Posts
-  getOverseasKoreanPosts(page?: number, limit?: number): Promise<{ posts: OverseasKoreanPost[], total: number }>;
+  getOverseasKoreanPosts(page?: number, limit?: number, search?: string): Promise<{ posts: OverseasKoreanPost[], total: number }>;
   getOverseasKoreanPost(id: string): Promise<OverseasKoreanPost | undefined>;
   createOverseasKoreanPost(post: InsertOverseasKoreanPost): Promise<OverseasKoreanPost>;
   updateOverseasKoreanPost(id: string, post: Partial<InsertOverseasKoreanPost>): Promise<OverseasKoreanPost | undefined>;
@@ -67,7 +67,9 @@ export class MemStorage implements IStorage {
         excerpt: "CordiaEC has formed a strategic alliance with leading tech innovators.",
         content: "CordiaEC today announced a groundbreaking strategic partnership with several leading technology innovators.",
         publishedDate: new Date("2024-01-15"),
-        imageUrl: null
+        imageUrl: null,
+        linkUrl: null,
+        category: null,
       }
     ];
     sampleArticles.forEach(a => this.newsArticles.set(a.id, a));
@@ -80,7 +82,9 @@ export class MemStorage implements IStorage {
         description: "Connecting Korean food brands with global buyers.",
         content: "The K-Food Initiative is designed to bridge the gap between innovative Korean food brands and international markets.",
         imageUrl: null,
-        category: "Food & Beverage"
+        category: "Food & Beverage",
+        linkUrl: null,
+        publishedDate: null,
       }
     ];
     sampleInitiatives.forEach(i => this.initiatives.set(i.id, i));
@@ -112,8 +116,13 @@ export class MemStorage implements IStorage {
     if (paper) { paper.views += 1; this.researchPapers.set(id, paper); }
   }
 
-  async getNewsArticles(page = 1, limit = 10): Promise<{ articles: NewsArticle[], total: number }> {
-    const all = Array.from(this.newsArticles.values()).sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime());
+  async getNewsArticles(page = 1, limit = 10, category?: string, search?: string): Promise<{ articles: NewsArticle[], total: number }> {
+    let all = Array.from(this.newsArticles.values()).sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime());
+    if (category) all = all.filter(a => (a as any).category === category);
+    if (search) {
+      const q = search.toLowerCase();
+      all = all.filter(a => a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q));
+    }
     const startIndex = (page - 1) * limit;
     return { articles: all.slice(startIndex, startIndex + limit), total: all.length };
   }
@@ -168,8 +177,12 @@ export class MemStorage implements IStorage {
     this.initiatives.delete(id);
   }
 
-  async getOverseasKoreanPosts(page = 1, limit = 10): Promise<{ posts: OverseasKoreanPost[], total: number }> {
-    const all = Array.from(this.overseasKoreanPosts.values()).sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime());
+  async getOverseasKoreanPosts(page = 1, limit = 10, search?: string): Promise<{ posts: OverseasKoreanPost[], total: number }> {
+    let all = Array.from(this.overseasKoreanPosts.values()).sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime());
+    if (search) {
+      const q = search.toLowerCase();
+      all = all.filter(p => p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q));
+    }
     const startIndex = (page - 1) * limit;
     return { posts: all.slice(startIndex, startIndex + limit), total: all.length };
   }
@@ -236,13 +249,25 @@ class PostgreSQLStorage implements IStorage {
       .where(eq(researchPapers.id, id));
   }
 
-  async getNewsArticles(page = 1, limit = 10): Promise<{ articles: NewsArticle[], total: number }> {
+  async getNewsArticles(page = 1, limit = 10, category?: string, search?: string): Promise<{ articles: NewsArticle[], total: number }> {
     const offset = (page - 1) * limit;
-    const articles = await this.db.select().from(newsArticles)
+    const conditions = [] as any[];
+    if (category) conditions.push(eq(newsArticles.category, category));
+    if (search) conditions.push(sql`(LOWER(${newsArticles.title}) LIKE ${'%' + search.toLowerCase() + '%'} OR LOWER(${newsArticles.excerpt}) LIKE ${'%' + search.toLowerCase() + '%'})`);
+    const whereClause = conditions.length > 0
+      ? (conditions.length === 1 ? conditions[0] : sql`${conditions[0]} AND ${conditions[1]}`)
+      : undefined;
+    const baseQuery = whereClause
+      ? this.db.select().from(newsArticles).where(whereClause)
+      : this.db.select().from(newsArticles);
+    const articles = await baseQuery
       .orderBy(desc(newsArticles.publishedDate))
       .limit(limit)
       .offset(offset);
-    const totalResult = await this.db.select({ count: count() }).from(newsArticles);
+    const countQuery = whereClause
+      ? this.db.select({ count: count() }).from(newsArticles).where(whereClause)
+      : this.db.select({ count: count() }).from(newsArticles);
+    const totalResult = await countQuery;
     return { articles, total: totalResult[0].count || 0 };
   }
 
@@ -288,13 +313,22 @@ class PostgreSQLStorage implements IStorage {
     await this.db.delete(initiatives).where(eq(initiatives.id, id));
   }
 
-  async getOverseasKoreanPosts(page = 1, limit = 10): Promise<{ posts: OverseasKoreanPost[], total: number }> {
+  async getOverseasKoreanPosts(page = 1, limit = 10, search?: string): Promise<{ posts: OverseasKoreanPost[], total: number }> {
     const offset = (page - 1) * limit;
-    const posts = await this.db.select().from(overseasKoreanPosts)
+    const whereClause = search
+      ? sql`(LOWER(${overseasKoreanPosts.title}) LIKE ${'%' + search.toLowerCase() + '%'} OR LOWER(${overseasKoreanPosts.excerpt}) LIKE ${'%' + search.toLowerCase() + '%'})`
+      : undefined;
+    const baseQuery = whereClause
+      ? this.db.select().from(overseasKoreanPosts).where(whereClause)
+      : this.db.select().from(overseasKoreanPosts);
+    const posts = await baseQuery
       .orderBy(desc(overseasKoreanPosts.publishedDate))
       .limit(limit)
       .offset(offset);
-    const totalResult = await this.db.select({ count: count() }).from(overseasKoreanPosts);
+    const countQuery = whereClause
+      ? this.db.select({ count: count() }).from(overseasKoreanPosts).where(whereClause)
+      : this.db.select({ count: count() }).from(overseasKoreanPosts);
+    const totalResult = await countQuery;
     return { posts, total: totalResult[0].count || 0 };
   }
 
