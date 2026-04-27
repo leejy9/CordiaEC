@@ -7,9 +7,12 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import Initiatives from "@/pages/Initiatives";
+import InitiativeDetail from "@/pages/InitiativeDetail";
 import News from "@/pages/News";
+import NewsDetail from "@/pages/NewsDetail";
 import Contact from "@/pages/Contact";
 import OverseasKorean from "@/pages/OverseasKorean";
+import OverseasKoreanDetail from "@/pages/OverseasKoreanDetail";
 import Admin from "@/pages/Admin";
 
 function Router() {
@@ -18,8 +21,11 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/initiatives" component={Initiatives} />
+      <Route path="/initiatives/:slug" component={InitiativeDetail} />
       <Route path="/news" component={News} />
+      <Route path="/news/:id" component={NewsDetail} />
       <Route path="/overseas-korean" component={OverseasKorean} />
+      <Route path="/overseas-korean/:id" component={OverseasKoreanDetail} />
       <Route path="/contact" component={Contact} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
