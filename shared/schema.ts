@@ -64,10 +64,20 @@ export const insertResearchPaperSchema = createInsertSchema(researchPapers).omit
   id: true,
 });
 
+export const INITIATIVE_CATEGORY_SLUGS = [
+  "k-food",
+  "k-beauty",
+  "startups",
+  "vc-matching",
+  "internships",
+  "forums",
+] as const;
+
 export const insertNewsArticleSchema = createInsertSchema(newsArticles).omit({
   id: true,
 }).extend({
   publishedDate: z.coerce.date(),
+  category: z.enum(INITIATIVE_CATEGORY_SLUGS).nullable().optional(),
 });
 
 export const insertInitiativeSchema = createInsertSchema(initiatives).omit({
