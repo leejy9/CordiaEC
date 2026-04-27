@@ -53,7 +53,7 @@ Images are stored as base64 data URLs in the database.
 ## List Pages (News, K-Diaspora)
 
 Both list pages support:
-- Title/excerpt search (News uses backend `?search=`; K-Diaspora filters client-side after fetching)
+- Title/excerpt search (both News and K-Diaspora pass `?search=` to the backend, which filters via SQL `LIKE` on title/excerpt)
 - Per-page selector (10 / 20 / 50)
 - Numbered pagination with previous/next and ellipsis for long page ranges
 - Tall rows (~140px) with w-40 h-28 thumbnails and 2-line excerpts

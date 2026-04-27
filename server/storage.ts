@@ -9,7 +9,7 @@ import {
 import { randomUUID } from "crypto";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { eq, desc, sql, count } from "drizzle-orm";
+import { eq, desc, sql, count, and, type SQL } from "drizzle-orm";
 
 export interface IStorage {
   // Contacts
@@ -118,7 +118,7 @@ export class MemStorage implements IStorage {
 
   async getNewsArticles(page = 1, limit = 10, category?: string, search?: string): Promise<{ articles: NewsArticle[], total: number }> {
     let all = Array.from(this.newsArticles.values()).sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime());
-    if (category) all = all.filter(a => (a as any).category === category);
+    if (category) all = all.filter(a => a.category === category);
     if (search) {
       const q = search.toLowerCase();
       all = all.filter(a => a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q));
@@ -251,12 +251,10 @@ class PostgreSQLStorage implements IStorage {
 
   async getNewsArticles(page = 1, limit = 10, category?: string, search?: string): Promise<{ articles: NewsArticle[], total: number }> {
     const offset = (page - 1) * limit;
-    const conditions = [] as any[];
+    const conditions: SQL[] = [];
     if (category) conditions.push(eq(newsArticles.category, category));
     if (search) conditions.push(sql`(LOWER(${newsArticles.title}) LIKE ${'%' + search.toLowerCase() + '%'} OR LOWER(${newsArticles.excerpt}) LIKE ${'%' + search.toLowerCase() + '%'})`);
-    const whereClause = conditions.length > 0
-      ? (conditions.length === 1 ? conditions[0] : sql`${conditions[0]} AND ${conditions[1]}`)
-      : undefined;
+    const whereClause = conditions.length === 0 ? undefined : conditions.length === 1 ? conditions[0] : and(...conditions);
     const baseQuery = whereClause
       ? this.db.select().from(newsArticles).where(whereClause)
       : this.db.select().from(newsArticles);
