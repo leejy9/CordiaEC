@@ -29,6 +29,7 @@ export const newsArticles = pgTable("news_articles", {
   excerpt: text("excerpt").notNull(),
   publishedDate: timestamp("published_date").notNull(),
   imageUrl: text("image_url"),
+  linkUrl: text("link_url"),
 });
 
 export const initiatives = pgTable("initiatives", {
@@ -39,6 +40,8 @@ export const initiatives = pgTable("initiatives", {
   content: text("content").notNull(),
   imageUrl: text("image_url"),
   category: text("category").notNull(),
+  linkUrl: text("link_url"),
+  publishedDate: timestamp("published_date"),
 });
 
 export const overseasKoreanPosts = pgTable("overseas_korean_posts", {

@@ -18,7 +18,7 @@ The client-side application uses React with TypeScript, built with Vite as the b
 - **Forms**: React Hook Form with Zod validation
 - **Styling**: Tailwind CSS with custom brand colors and design tokens
 
-The frontend is organized into pages (Home, About, Initiatives, News, Contact), reusable components, and modal dialogs for detailed content display.
+The frontend is organized into pages (Home, About, Initiatives, News, K-Diaspora, Contact, Admin), reusable components, and modal dialogs for detailed content display.
 
 ## Backend Architecture
 
@@ -31,17 +31,27 @@ The server uses Express.js with TypeScript, following a RESTful API design:
 
 ## Database Schema
 
-The application uses PostgreSQL with the following main entities:
+The application uses Supabase PostgreSQL with the following main entities:
 
 - **contacts**: User inquiries with name, email, message, and timestamps
-- **news_articles**: Content management for news with title, content, excerpt, and publication dates
+- **news_articles**: Content with title, content, excerpt, imageUrl, linkUrl, and publication dates
 - **research_papers**: Academic content with view/download tracking
-- **initiatives**: Program information with slugs, categories, and rich content
-- **UUID Primary Keys**: All tables use UUID primary keys for better distributed system support
+- **initiatives**: Program info (K-Food, K-Beauty, Startups, VC Matching, Internships, Forums) with slugs, categories, linkUrl, publishedDate, and rich content
+- **overseas_korean_posts**: K-Diaspora board with title, content, excerpt, imageUrl, linkUrl, publishedDate
+- **UUID Primary Keys**: All tables use UUID primary keys
+
+## Admin Panel
+
+Password-protected admin panel at `/admin` (password: `cordia2025`) allows managing all 3 content boards:
+- **News**: Create/Edit/Delete news articles with image file upload
+- **Initiatives**: Create/Edit/Delete with toggle selector for 6 initiative types
+- **K-Diaspora**: Create/Edit/Delete overseas Korean community posts
+
+Images are stored as base64 data URLs in the database.
 
 ## Authentication and Authorization
 
-Currently implements a simple approach without user authentication, suitable for a public-facing informational website. Contact forms are the primary user interaction point.
+Admin panel uses a simple password gate (sessionStorage-based). Contact forms are the primary user interaction point for the public site.
 
 # External Dependencies
 

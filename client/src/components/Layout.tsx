@@ -18,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'About', href: '/about' },
     { name: 'Initiatives', href: '/initiatives' },
     { name: 'News', href: '/news' },
-    { name: '재외동포', href: '/overseas-korean' },
+    { name: 'K-Diaspora', href: '/overseas-korean' },
     { name: 'Contact', href: '/contact' },
   ];
 
