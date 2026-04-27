@@ -9,6 +9,8 @@ import About from "@/pages/About";
 import Initiatives from "@/pages/Initiatives";
 import News from "@/pages/News";
 import Contact from "@/pages/Contact";
+import OverseasKorean from "@/pages/OverseasKorean";
+import Admin from "@/pages/Admin";
 
 function Router() {
   return (
@@ -17,7 +19,9 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/initiatives" component={Initiatives} />
       <Route path="/news" component={News} />
+      <Route path="/overseas-korean" component={OverseasKorean} />
       <Route path="/contact" component={Contact} />
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );

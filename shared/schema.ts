@@ -41,6 +41,16 @@ export const initiatives = pgTable("initiatives", {
   category: text("category").notNull(),
 });
 
+export const overseasKoreanPosts = pgTable("overseas_korean_posts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt").notNull(),
+  imageUrl: text("image_url"),
+  linkUrl: text("link_url"),
+  publishedDate: timestamp("published_date").notNull(),
+});
+
 export const insertContactSchema = createInsertSchema(contacts).omit({
   id: true,
   createdAt: true,
@@ -58,6 +68,10 @@ export const insertInitiativeSchema = createInsertSchema(initiatives).omit({
   id: true,
 });
 
+export const insertOverseasKoreanPostSchema = createInsertSchema(overseasKoreanPosts).omit({
+  id: true,
+});
+
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type Contact = typeof contacts.$inferSelect;
 
@@ -69,3 +83,6 @@ export type NewsArticle = typeof newsArticles.$inferSelect;
 
 export type InsertInitiative = z.infer<typeof insertInitiativeSchema>;
 export type Initiative = typeof initiatives.$inferSelect;
+
+export type InsertOverseasKoreanPost = z.infer<typeof insertOverseasKoreanPostSchema>;
+export type OverseasKoreanPost = typeof overseasKoreanPosts.$inferSelect;
