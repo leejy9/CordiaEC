@@ -65,14 +65,20 @@ export const insertResearchPaperSchema = createInsertSchema(researchPapers).omit
 
 export const insertNewsArticleSchema = createInsertSchema(newsArticles).omit({
   id: true,
+}).extend({
+  publishedDate: z.coerce.date(),
 });
 
 export const insertInitiativeSchema = createInsertSchema(initiatives).omit({
   id: true,
+}).extend({
+  publishedDate: z.coerce.date().nullable().optional(),
 });
 
 export const insertOverseasKoreanPostSchema = createInsertSchema(overseasKoreanPosts).omit({
   id: true,
+}).extend({
+  publishedDate: z.coerce.date(),
 });
 
 export type InsertContact = z.infer<typeof insertContactSchema>;
