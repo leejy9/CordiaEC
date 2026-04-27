@@ -2,9 +2,8 @@ import {
   type Contact, type InsertContact,
   type ResearchPaper, type InsertResearchPaper,
   type NewsArticle, type InsertNewsArticle,
-  type Initiative, type InsertInitiative,
   type OverseasKoreanPost, type InsertOverseasKoreanPost,
-  contacts, newsArticles, initiatives, researchPapers, overseasKoreanPosts
+  contacts, newsArticles, researchPapers, overseasKoreanPosts
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -28,13 +27,6 @@ export interface IStorage {
   updateNewsArticle(id: string, article: Partial<InsertNewsArticle>): Promise<NewsArticle | undefined>;
   deleteNewsArticle(id: string): Promise<void>;
 
-  // Initiatives
-  getInitiatives(): Promise<Initiative[]>;
-  getInitiative(slug: string): Promise<Initiative | undefined>;
-  createInitiative(initiative: InsertInitiative): Promise<Initiative>;
-  updateInitiative(id: string, initiative: Partial<InsertInitiative>): Promise<Initiative | undefined>;
-  deleteInitiative(id: string): Promise<void>;
-
   // Overseas Korean Posts
   getOverseasKoreanPosts(page?: number, limit?: number, search?: string): Promise<{ posts: OverseasKoreanPost[], total: number }>;
   getOverseasKoreanPost(id: string): Promise<OverseasKoreanPost | undefined>;
@@ -47,14 +39,12 @@ export class MemStorage implements IStorage {
   private contacts: Map<string, Contact>;
   private researchPapers: Map<string, ResearchPaper>;
   private newsArticles: Map<string, NewsArticle>;
-  private initiatives: Map<string, Initiative>;
   private overseasKoreanPosts: Map<string, OverseasKoreanPost>;
 
   constructor() {
     this.contacts = new Map();
     this.researchPapers = new Map();
     this.newsArticles = new Map();
-    this.initiatives = new Map();
     this.overseasKoreanPosts = new Map();
     this.initializeSampleData();
   }
@@ -73,21 +63,6 @@ export class MemStorage implements IStorage {
       }
     ];
     sampleArticles.forEach(a => this.newsArticles.set(a.id, a));
-
-    const sampleInitiatives: Initiative[] = [
-      {
-        id: "1",
-        slug: "k-food",
-        title: "K-Food Initiative",
-        description: "Connecting Korean food brands with global buyers.",
-        content: "The K-Food Initiative is designed to bridge the gap between innovative Korean food brands and international markets.",
-        imageUrl: null,
-        category: "Food & Beverage",
-        linkUrl: null,
-        publishedDate: null,
-      }
-    ];
-    sampleInitiatives.forEach(i => this.initiatives.set(i.id, i));
   }
 
   async createContact(insertContact: InsertContact): Promise<Contact> {
@@ -133,7 +108,13 @@ export class MemStorage implements IStorage {
 
   async createNewsArticle(article: InsertNewsArticle): Promise<NewsArticle> {
     const id = randomUUID();
-    const newArticle: NewsArticle = { ...article, id };
+    const newArticle: NewsArticle = {
+      ...article,
+      id,
+      imageUrl: article.imageUrl ?? null,
+      linkUrl: article.linkUrl ?? null,
+      category: article.category ?? null,
+    };
     this.newsArticles.set(id, newArticle);
     return newArticle;
   }
@@ -148,33 +129,6 @@ export class MemStorage implements IStorage {
 
   async deleteNewsArticle(id: string): Promise<void> {
     this.newsArticles.delete(id);
-  }
-
-  async getInitiatives(): Promise<Initiative[]> {
-    return Array.from(this.initiatives.values());
-  }
-
-  async getInitiative(slug: string): Promise<Initiative | undefined> {
-    return Array.from(this.initiatives.values()).find(i => i.slug === slug);
-  }
-
-  async createInitiative(initiative: InsertInitiative): Promise<Initiative> {
-    const id = randomUUID();
-    const newInitiative: Initiative = { ...initiative, id };
-    this.initiatives.set(id, newInitiative);
-    return newInitiative;
-  }
-
-  async updateInitiative(id: string, initiative: Partial<InsertInitiative>): Promise<Initiative | undefined> {
-    const existing = this.initiatives.get(id);
-    if (!existing) return undefined;
-    const updated = { ...existing, ...initiative };
-    this.initiatives.set(id, updated);
-    return updated;
-  }
-
-  async deleteInitiative(id: string): Promise<void> {
-    this.initiatives.delete(id);
   }
 
   async getOverseasKoreanPosts(page = 1, limit = 10, search?: string): Promise<{ posts: OverseasKoreanPost[], total: number }> {
@@ -193,7 +147,12 @@ export class MemStorage implements IStorage {
 
   async createOverseasKoreanPost(post: InsertOverseasKoreanPost): Promise<OverseasKoreanPost> {
     const id = randomUUID();
-    const newPost: OverseasKoreanPost = { ...post, id };
+    const newPost: OverseasKoreanPost = {
+      ...post,
+      id,
+      imageUrl: post.imageUrl ?? null,
+      linkUrl: post.linkUrl ?? null,
+    };
     this.overseasKoreanPosts.set(id, newPost);
     return newPost;
   }
@@ -286,29 +245,6 @@ class PostgreSQLStorage implements IStorage {
 
   async deleteNewsArticle(id: string): Promise<void> {
     await this.db.delete(newsArticles).where(eq(newsArticles.id, id));
-  }
-
-  async getInitiatives(): Promise<Initiative[]> {
-    return await this.db.select().from(initiatives);
-  }
-
-  async getInitiative(slug: string): Promise<Initiative | undefined> {
-    const result = await this.db.select().from(initiatives).where(eq(initiatives.slug, slug));
-    return result[0];
-  }
-
-  async createInitiative(initiative: InsertInitiative): Promise<Initiative> {
-    const [created] = await this.db.insert(initiatives).values(initiative).returning();
-    return created;
-  }
-
-  async updateInitiative(id: string, initiative: Partial<InsertInitiative>): Promise<Initiative | undefined> {
-    const [updated] = await this.db.update(initiatives).set(initiative).where(eq(initiatives.id, id)).returning();
-    return updated;
-  }
-
-  async deleteInitiative(id: string): Promise<void> {
-    await this.db.delete(initiatives).where(eq(initiatives.id, id));
   }
 
   async getOverseasKoreanPosts(page = 1, limit = 10, search?: string): Promise<{ posts: OverseasKoreanPost[], total: number }> {

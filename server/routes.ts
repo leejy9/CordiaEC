@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContactSchema, insertNewsArticleSchema, insertInitiativeSchema, insertOverseasKoreanPostSchema } from "@shared/schema";
+import { insertContactSchema, insertNewsArticleSchema, insertOverseasKoreanPostSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -96,70 +96,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ success: false, message: "Failed to delete news article" });
-    }
-  });
-
-  // ---- Initiatives ----
-  app.get("/api/initiatives", async (req, res) => {
-    try {
-      const initiatives = await storage.getInitiatives();
-      res.json({ success: true, initiatives });
-    } catch (error) {
-      res.status(500).json({ success: false, message: "Failed to fetch initiatives" });
-    }
-  });
-
-  app.get("/api/initiatives/:slug", async (req, res) => {
-    try {
-      const initiative = await storage.getInitiative(req.params.slug);
-      if (!initiative) {
-        res.status(404).json({ success: false, message: "Initiative not found" });
-        return;
-      }
-      res.json({ success: true, initiative });
-    } catch (error) {
-      res.status(500).json({ success: false, message: "Failed to fetch initiative" });
-    }
-  });
-
-  app.post("/api/initiatives", async (req, res) => {
-    try {
-      const validatedData = insertInitiativeSchema.parse(req.body);
-      const initiative = await storage.createInitiative(validatedData);
-      res.json({ success: true, initiative });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ success: false, message: "Invalid data", errors: error.errors });
-      } else {
-        res.status(500).json({ success: false, message: "Failed to create initiative" });
-      }
-    }
-  });
-
-  app.put("/api/initiatives/:id", async (req, res) => {
-    try {
-      const partial = insertInitiativeSchema.partial().parse(req.body);
-      const initiative = await storage.updateInitiative(req.params.id, partial);
-      if (!initiative) {
-        res.status(404).json({ success: false, message: "Initiative not found" });
-        return;
-      }
-      res.json({ success: true, initiative });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ success: false, message: "Invalid data", errors: error.errors });
-      } else {
-        res.status(500).json({ success: false, message: "Failed to update initiative" });
-      }
-    }
-  });
-
-  app.delete("/api/initiatives/:id", async (req, res) => {
-    try {
-      await storage.deleteInitiative(req.params.id);
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ success: false, message: "Failed to delete initiative" });
     }
   });
 

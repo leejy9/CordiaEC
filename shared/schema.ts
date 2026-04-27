@@ -33,18 +33,6 @@ export const newsArticles = pgTable("news_articles", {
   category: text("category"),
 });
 
-export const initiatives = pgTable("initiatives", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  slug: text("slug").notNull().unique(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  content: text("content").notNull(),
-  imageUrl: text("image_url"),
-  category: text("category").notNull(),
-  linkUrl: text("link_url"),
-  publishedDate: timestamp("published_date"),
-});
-
 export const overseasKoreanPosts = pgTable("overseas_korean_posts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
@@ -80,12 +68,6 @@ export const insertNewsArticleSchema = createInsertSchema(newsArticles).omit({
   category: z.enum(INITIATIVE_CATEGORY_SLUGS).nullable().optional(),
 });
 
-export const insertInitiativeSchema = createInsertSchema(initiatives).omit({
-  id: true,
-}).extend({
-  publishedDate: z.coerce.date().nullable().optional(),
-});
-
 export const insertOverseasKoreanPostSchema = createInsertSchema(overseasKoreanPosts).omit({
   id: true,
 }).extend({
@@ -100,9 +82,6 @@ export type ResearchPaper = typeof researchPapers.$inferSelect;
 
 export type InsertNewsArticle = z.infer<typeof insertNewsArticleSchema>;
 export type NewsArticle = typeof newsArticles.$inferSelect;
-
-export type InsertInitiative = z.infer<typeof insertInitiativeSchema>;
-export type Initiative = typeof initiatives.$inferSelect;
 
 export type InsertOverseasKoreanPost = z.infer<typeof insertOverseasKoreanPostSchema>;
 export type OverseasKoreanPost = typeof overseasKoreanPosts.$inferSelect;

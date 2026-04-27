@@ -4,67 +4,10 @@ import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Globe, Handshake, Lightbulb, Utensils, LineChart, GraduationCap, MessageSquare, Users } from "lucide-react";
+import { Handshake, Lightbulb, Users } from "lucide-react";
 import NewsModal from "@/components/modals/NewsModal";
-import type { Initiative, NewsArticle } from "@shared/schema";
-
-// Hardcoded initiatives data (no database required)
-const initiatives: Initiative[] = [
-  {
-    id: "1",
-    slug: "k-food",
-    title: "K-Food Initiative",
-    description: "Connecting Korean food brands with global buyers and distribution channels for international market expansion.",
-    content: "The K-Food Initiative is designed to bridge the gap between innovative Korean food brands and international markets. Our comprehensive program provides market research, regulatory compliance support, distribution channel development, and strategic partnerships to help Korean food companies successfully expand globally. We work with local distributors, retailers, and food service providers to create sustainable market entry strategies.",
-    imageUrl: "https://images.unsplash.com/photo-1567306301408-e75d5e8e9fc7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-    category: "Food & Beverage"
-  },
-  {
-    id: "2",
-    slug: "k-beauty",
-    title: "K-Beauty Initiative",
-    description: "Empowering K-Beauty brands to certify and launch in overseas markets with comprehensive market entry support.",
-    content: "Our K-Beauty Initiative provides comprehensive support for Korean beauty brands looking to enter international markets. We offer regulatory guidance, certification support, market analysis, and partnership development to ensure successful market entry and sustainable growth in the global beauty industry.",
-    imageUrl: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200",
-    category: "Beauty & Cosmetics"
-  },
-  {
-    id: "3",
-    slug: "startups",
-    title: "Startups Program",
-    description: "Mentoring and funding diaspora-led startups for global expansion with strategic partnership opportunities.",
-    content: "The Startups Program focuses on supporting diaspora-led startups with mentoring, funding opportunities, and strategic partnerships. We provide access to global networks, investor connections, and market development resources to help innovative startups scale internationally.",
-    imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200",
-    category: "Technology & Innovation"
-  },
-  {
-    id: "4",
-    slug: "vc-matching",
-    title: "VC Matching",
-    description: "Bridging innovative companies with top international venture capital for strategic investment opportunities.",
-    content: "Our VC Matching program connects innovative companies with leading international venture capital firms. We facilitate strategic investment opportunities through our extensive network of investors, providing companies with access to capital, expertise, and global market opportunities.",
-    imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-    category: "Investment & Finance"
-  },
-  {
-    id: "5",
-    slug: "internships",
-    title: "Internships Program",
-    description: "Offering cross-border internship opportunities for Korean diaspora youth in international organizations.",
-    content: "The Internships Program creates valuable cross-border internship opportunities for Korean diaspora youth in leading international organizations. We partner with global companies, NGOs, and government agencies to provide meaningful work experiences that build career foundations and cultural bridges.",
-    imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200",
-    category: "Education & Development"
-  },
-  {
-    id: "6",
-    slug: "forums",
-    title: "Knowledge Forums",
-    description: "Fostering knowledge exchange through online and offline seminars & forums for industry collaboration.",
-    content: "Our Knowledge Forums facilitate meaningful knowledge exchange through both online and offline seminars, conferences, and collaborative forums. These platforms bring together industry leaders, researchers, and innovators to share insights, discuss trends, and develop collaborative solutions to global challenges.",
-    imageUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
-    category: "Knowledge & Collaboration"
-  }
-];
+import type { NewsArticle } from "@shared/schema";
+import { INITIATIVE_DEFAULTS, INITIATIVE_SLUGS } from "@/lib/initiativesData";
 
 export default function Home() {
   const [selectedNews, setSelectedNews] = useState<NewsArticle | null>(null);
@@ -80,18 +23,6 @@ export default function Home() {
   const openNewsModal = (article: NewsArticle) => {
     setSelectedNews(article);
     setNewsModalOpen(true);
-  };
-
-  const getInitiativeIcon = (slug: string) => {
-    switch (slug) {
-      case 'k-food': return <Utensils className="text-4xl text-green-600" />;
-      case 'k-beauty': return <Users className="text-4xl text-pink-600" />;
-      case 'startups': return <Globe className="text-4xl text-blue-600" />;
-      case 'vc-matching': return <LineChart className="text-4xl text-blue-600" />;
-      case 'internships': return <GraduationCap className="text-4xl text-purple-600" />;
-      case 'forums': return <MessageSquare className="text-4xl text-orange-600" />;
-      default: return <Globe className="text-4xl text-cordia-teal" />;
-    }
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -222,71 +153,28 @@ export default function Home() {
           {/* Six Initiatives Grid */}
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-              <div className="text-center">
-                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
-                  <img 
-                    src="https://images.unsplash.com/photo-1498654896293-37aacf113fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
-                    alt="K-Food" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-sm font-semibold text-cordia-dark">K-Food</h3>
-              </div>
-
-              <div className="text-center">
-                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
-                  <img 
-                    src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
-                    alt="K-Beauty" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-sm font-semibold text-cordia-dark">K-Beauty</h3>
-              </div>
-
-              <div className="text-center">
-                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
-                  <img 
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" 
-                    alt="Startup Support" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-sm font-semibold text-cordia-dark">Startup Support</h3>
-              </div>
-
-              <div className="text-center">
-                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
-                  <img 
-                    src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
-                    alt="VC Matching" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-sm font-semibold text-cordia-dark">VC Matching</h3>
-              </div>
-
-              <div className="text-center">
-                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
-                  <img 
-                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
-                    alt="Internship Programs" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-sm font-semibold text-cordia-dark">Internship Programs</h3>
-              </div>
-
-              <div className="text-center">
-                <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
-                  <img 
-                    src="https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
-                    alt="Global Summit" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-sm font-semibold text-cordia-dark">Global Summit</h3>
-              </div>
+              {INITIATIVE_SLUGS.map((slug) => {
+                const card = INITIATIVE_DEFAULTS[slug];
+                return (
+                  <Link
+                    key={slug}
+                    href={`/initiatives/${slug}`}
+                    className="text-center group"
+                    data-testid={`link-home-initiative-${slug}`}
+                  >
+                    <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
+                      <img
+                        src={card.imageUrl}
+                        alt={card.label}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <h3 className="text-sm font-semibold text-cordia-dark group-hover:text-cordia-teal transition-colors">
+                      {card.label}
+                    </h3>
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
