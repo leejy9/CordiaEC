@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "in1poPA4tgTpASwNHilWe"
+uri = "file://HANDOVER.md"
+type = "text"
+title = "CordiaEC 인수인계 문서"
