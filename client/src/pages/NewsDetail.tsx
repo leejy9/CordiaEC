@@ -63,7 +63,7 @@ export default function NewsDetail() {
             <img
               src={article.image_url}
               alt={article.title}
-              className="w-full max-h-96 object-cover rounded-2xl mb-8"
+              className="w-full h-auto rounded-2xl mb-8"
             />
           )}
 

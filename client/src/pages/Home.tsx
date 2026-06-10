@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Handshake, Lightbulb, Users } from "lucide-react";
+import { Handshake, Lightbulb, Users, ImageIcon } from "lucide-react";
 import NewsModal from "@/components/modals/NewsModal";
 import { getInitiatives, getHomePosts, getSiteSettings } from "@/lib/queries";
 import type { Post, Initiative } from "@/lib/database.types";
@@ -214,40 +213,41 @@ export default function Home() {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <Card className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Title</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {newsArticles.map((article: Post) => (
-                      <tr key={article.id} className="hover:bg-gray-50 transition-colors" data-testid={`row-news-${article.id}`}>
-                        <td className="px-6 py-4">
-                          <div
-                            className="cursor-pointer"
-                            onClick={() => openNewsModal(article)}
-                          >
-                            <h3 className="font-semibold text-cordia-dark hover:text-cordia-teal transition-colors" data-testid={`text-news-title-${article.id}`}>
-                              {article.title}
-                            </h3>
-                            <p className="text-sm text-gray-600 mt-1" data-testid={`text-news-desc-${article.id}`}>
-                              {article.excerpt}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600" data-testid={`text-news-date-${article.id}`}>
-                          {new Date(article.published_date).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {newsArticles.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-2xl text-gray-400">
+                No news yet.
               </div>
-            </Card>
+            ) : (
+              <div className="space-y-4">
+                {newsArticles.map((article: Post) => (
+                  <div
+                    key={article.id}
+                    onClick={() => openNewsModal(article)}
+                    className="flex gap-4 bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md hover:border-cordia-teal/30 transition-all cursor-pointer group"
+                    data-testid={`row-news-${article.id}`}
+                  >
+                    <div className="w-32 h-24 sm:w-40 sm:h-28 rounded-lg overflow-hidden shrink-0 bg-gray-100 flex items-center justify-center">
+                      {article.image_url ? (
+                        <img src={article.image_url} alt={article.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <ImageIcon className="w-8 h-8 text-gray-300" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0 py-1">
+                      <h3 className="font-semibold text-cordia-dark group-hover:text-cordia-teal transition-colors line-clamp-1" data-testid={`text-news-title-${article.id}`}>
+                        {article.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 line-clamp-2 mt-2" data-testid={`text-news-desc-${article.id}`}>
+                        {article.excerpt}
+                      </p>
+                    </div>
+                    <div className="shrink-0 self-center text-sm text-gray-400 whitespace-nowrap" data-testid={`text-news-date-${article.id}`}>
+                      {new Date(article.published_date).toLocaleDateString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="text-center mt-8">
               <Link href="/news">
