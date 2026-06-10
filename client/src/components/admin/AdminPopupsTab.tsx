@@ -32,8 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, CalendarRange } from "lucide-react";
+import { Plus, Pencil, Trash2, CalendarRange, Move } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PopupPositionEditor from "@/components/admin/PopupPositionEditor";
 import {
   getAllPopups,
   createPopup,
@@ -69,6 +70,7 @@ function popupStatus(p: Popup): { label: string; cls: string } {
 export default function AdminPopupsTab() {
   const { toast } = useToast();
   const [formOpen, setFormOpen] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<Popup | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Popup | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -83,6 +85,8 @@ export default function AdminPopupsTab() {
       linkUrl: "",
       position: "center" as PopupPosition,
       width: "380",
+      posX: 50,
+      posY: 25,
       startsAt: toLocalInput(now.toISOString()),
       endsAt: toLocalInput(weekLater.toISOString()),
     };
@@ -109,6 +113,8 @@ export default function AdminPopupsTab() {
       linkUrl: p.link_url || "",
       position: p.position,
       width: String(p.width),
+      posX: p.pos_x ?? 50,
+      posY: p.pos_y ?? 25,
       startsAt: toLocalInput(p.starts_at),
       endsAt: toLocalInput(p.ends_at),
     });
@@ -139,6 +145,8 @@ export default function AdminPopupsTab() {
         link_url: form.linkUrl || null,
         position: form.position,
         width: Math.min(800, Math.max(240, parseInt(form.width, 10) || 380)),
+        pos_x: form.posX,
+        pos_y: form.posY,
         starts_at: new Date(form.startsAt).toISOString(),
         ends_at: new Date(form.endsAt).toISOString(),
         is_active: editing ? editing.is_active : true,
@@ -207,7 +215,11 @@ export default function AdminPopupsTab() {
                     <div className="flex items-center gap-2">
                       <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${status.cls}`}>{status.label}</span>
                       <p className="font-semibold text-cordia-dark truncate">{p.title}</p>
-                      <Badge variant="outline" className="text-xs shrink-0">{POSITION_LABELS[p.position]}</Badge>
+                      <Badge variant="outline" className="text-xs shrink-0">
+                        {p.pos_x != null && p.pos_y != null
+                          ? `${Math.round(p.pos_x)}%, ${Math.round(p.pos_y)}% · ${p.width}px`
+                          : POSITION_LABELS[p.position]}
+                      </Badge>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
                       <CalendarRange className="w-3 h-3" />
@@ -243,7 +255,7 @@ export default function AdminPopupsTab() {
         )}
       </div>
 
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+      <Dialog open={formOpen && !editorOpen} onOpenChange={setFormOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? "팝업 수정" : "새 팝업"}</DialogTitle>
@@ -294,30 +306,25 @@ export default function AdminPopupsTab() {
                 placeholder="https://..."
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>위치</Label>
-                <Select value={form.position} onValueChange={(v: PopupPosition) => setForm({ ...form, position: v })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(Object.keys(POSITION_LABELS) as PopupPosition[]).map((pos) => (
-                      <SelectItem key={pos} value={pos}>{POSITION_LABELS[pos]}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div>
+              <Label>위치 / 크기</Label>
+              <div className="flex items-center gap-3 mt-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-cordia-teal/50 text-cordia-teal hover:bg-cordia-teal/5"
+                  onClick={() => setEditorOpen(true)}
+                >
+                  <Move className="w-4 h-4 mr-2" />
+                  마우스로 위치/크기 조정
+                </Button>
+                <span className="text-xs text-gray-400">
+                  현재: 화면의 {Math.round(form.posX)}%, {Math.round(form.posY)}% 지점 · 폭 {form.width}px
+                </span>
               </div>
-              <div>
-                <Label>가로 크기 (px, 240~800)</Label>
-                <Input
-                  type="number"
-                  min="240"
-                  max="800"
-                  value={form.width}
-                  onChange={(e) => setForm({ ...form, width: e.target.value })}
-                />
-              </div>
+              <p className="text-xs text-gray-400 mt-1.5">
+                미리보기 화면에서 팝업을 직접 끌어다 놓고, 모서리를 드래그해 크기를 조절합니다.
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -350,6 +357,23 @@ export default function AdminPopupsTab() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* 드래그&리사이즈 위치 에디터 */}
+      {editorOpen && (
+        <PopupPositionEditor
+          title={form.title}
+          content={form.content}
+          imageUrl={form.imageUrl}
+          initialX={form.posX}
+          initialY={form.posY}
+          initialWidth={Math.min(800, Math.max(240, parseInt(form.width, 10) || 380))}
+          onSave={(x, y, w) => {
+            setForm((f) => ({ ...f, posX: x, posY: y, width: String(w) }));
+            setEditorOpen(false);
+          }}
+          onCancel={() => setEditorOpen(false)}
+        />
+      )}
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>

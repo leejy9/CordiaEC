@@ -47,3 +47,7 @@ INSERT INTO hero_slides (image_url, headline, sub_lines, display_order) VALUES (
 
 INSERT INTO site_settings (key, value) VALUES ('hero_interval', '5')
 ON CONFLICT (key) DO NOTHING;
+
+-- 추가: 팝업 자유 배치 좌표 (이미 적용됨)
+ALTER TABLE popups ADD COLUMN pos_x REAL;
+ALTER TABLE popups ADD COLUMN pos_y REAL;

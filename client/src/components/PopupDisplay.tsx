@@ -35,10 +35,19 @@ function PopupCard({ popup, onClose }: { popup: Popup; onClose: (id: string, hid
     </>
   );
 
+  // 드래그로 지정한 좌표(% 기준)가 있으면 사용, 없으면 프리셋 위치
+  const hasFreePosition = popup.pos_x != null && popup.pos_y != null;
+  const freeStyle: React.CSSProperties = hasFreePosition
+    ? {
+        left: `clamp(8px, ${popup.pos_x}%, calc(100vw - ${Math.min(popup.width, 800)}px - 8px))`,
+        top: `clamp(72px, ${popup.pos_y}%, calc(100vh - 160px))`,
+      }
+    : {};
+
   return (
     <div
-      className={`fixed z-[90] ${POSITION_CLASSES[popup.position] || POSITION_CLASSES.center} max-w-[calc(100vw-2rem)]`}
-      style={{ width: popup.width }}
+      className={`fixed z-[90] ${hasFreePosition ? "" : POSITION_CLASSES[popup.position] || POSITION_CLASSES.center} max-w-[calc(100vw-2rem)]`}
+      style={{ width: popup.width, ...freeStyle }}
       data-testid={`popup-${popup.id}`}
     >
       <div className="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">

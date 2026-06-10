@@ -64,6 +64,8 @@ export interface Popup {
   link_url: string | null;
   position: PopupPosition;
   width: number;
+  pos_x: number | null;  // 화면 대비 % (드래그로 지정). null이면 position 프리셋 사용
+  pos_y: number | null;
   starts_at: string;
   ends_at: string;
   is_active: boolean;
