@@ -5,23 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Pin, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getSiteSettings, updateSiteSetting, getPosts } from "@/lib/queries";
+import { getSiteSettings, updateSiteSetting, getPosts, updatePost } from "@/lib/queries";
 import type { Post } from "@/lib/database.types";
 
 export default function AdminHomeSettingsTab() {
   const { toast } = useToast();
   const [boardTitle, setBoardTitle] = useState("Latest News");
   const [boardCount, setBoardCount] = useState("3");
-  const [pinnedPosts, setPinnedPosts] = useState<string[]>([]);
 
-  const { data: settings = {} } = useQuery({
+  const { data: settings } = useQuery({
     queryKey: ["site_settings"],
     queryFn: getSiteSettings,
   });
 
   const { data: postsData } = useQuery({
-    queryKey: ["posts_news"],
+    queryKey: ["admin_posts", "news"],
     queryFn: () => getPosts({ board: "news", page: 1, limit: 100 }),
   });
 
@@ -32,26 +34,39 @@ export default function AdminHomeSettingsTab() {
     }
   }, [settings]);
 
-  const posts = postsData?.posts || [];
-  const pinnedPostsList = posts.filter((p) => p.is_pinned_home);
+  // 고정 글 먼저, 그 다음 최신순 — 홈 화면과 동일한 순서로 보여줌
+  const posts = [...(postsData?.posts || [])].sort((a, b) => {
+    if (a.is_pinned_home !== b.is_pinned_home) return a.is_pinned_home ? -1 : 1;
+    return new Date(b.published_date).getTime() - new Date(a.published_date).getTime();
+  });
 
-  const updateMutation = useMutation({
+  const settingsMutation = useMutation({
     mutationFn: async () => {
       await updateSiteSetting("home_board_title", boardTitle);
       await updateSiteSetting("home_board_count", boardCount);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["site_settings"] });
+      queryClient.invalidateQueries();
       toast({ title: "설정 저장 완료" });
     },
     onError: (err: any) => {
-      toast({
-        title: "오류",
-        description: err.message,
-        variant: "destructive",
-      });
+      toast({ title: "오류", description: err.message, variant: "destructive" });
     },
   });
+
+  const pinMutation = useMutation({
+    mutationFn: ({ id, pinned }: { id: string; pinned: boolean }) =>
+      updatePost(id, { is_pinned_home: pinned }),
+    onSuccess: (_data, { pinned }) => {
+      queryClient.invalidateQueries();
+      toast({ title: pinned ? "홈 게시판에 고정됨" : "고정 해제됨" });
+    },
+    onError: (err: any) => {
+      toast({ title: "오류", description: err.message, variant: "destructive" });
+    },
+  });
+
+  const count = parseInt(boardCount, 10) || 3;
 
   return (
     <div className="space-y-6">
@@ -59,56 +74,85 @@ export default function AdminHomeSettingsTab() {
         <CardHeader>
           <CardTitle>홈 게시판 설정</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <Label>게시판 섹션 제목</Label>
-            <Input value={boardTitle} onChange={(e) => setBoardTitle(e.target.value)} placeholder="예: Latest News" />
-            <p className="text-xs text-gray-400 mt-1">홈 화면에 표시될 게시판 제목입니다.</p>
+        <CardContent className="space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <Label>섹션 제목</Label>
+              <Input value={boardTitle} onChange={(e) => setBoardTitle(e.target.value)} placeholder="예: Latest News" />
+            </div>
+            <div>
+              <Label>노출 건수</Label>
+              <Input
+                type="number"
+                value={boardCount}
+                onChange={(e) => setBoardCount(e.target.value)}
+                min="1"
+                max="20"
+              />
+            </div>
           </div>
-
-          <div>
-            <Label>노출 건수</Label>
-            <Input
-              type="number"
-              value={boardCount}
-              onChange={(e) => setBoardCount(e.target.value)}
-              placeholder="3"
-              min="1"
-              max="20"
-            />
-            <p className="text-xs text-gray-400 mt-1">홈 게시판에 표시할 최신 글의 개수입니다.</p>
-          </div>
-
           <Button
             className="bg-cordia-teal hover:bg-cordia-green text-white"
-            onClick={() => updateMutation.mutate()}
-            disabled={updateMutation.isPending}
+            onClick={() => settingsMutation.mutate()}
+            disabled={settingsMutation.isPending}
           >
-            {updateMutation.isPending ? "저장 중..." : "설정 저장"}
+            {settingsMutation.isPending ? "저장 중..." : "설정 저장"}
           </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>홈 게시판 고정글 ({pinnedPostsList.length}개)</CardTitle>
+          <CardTitle>홈 게시판 노출 글 관리</CardTitle>
+          <p className="text-sm text-gray-500 font-normal">
+            홈 게시판에는 <strong>고정 글이 먼저</strong>, 나머지는 <strong>최신순</strong>으로 총 {count}개가
+            표시됩니다. 아래 스위치로 글을 고정하세요. 새 뉴스를 쓰면 자동으로 후보에 올라갑니다.
+          </p>
         </CardHeader>
         <CardContent>
-          {pinnedPostsList.length === 0 ? (
-            <p className="text-gray-400 text-sm">고정된 글이 없습니다. 게시글 탭에서 설정하세요.</p>
+          {posts.length === 0 ? (
+            <p className="text-gray-400 text-sm py-8 text-center">
+              아직 뉴스가 없습니다. 게시글 탭에서 뉴스를 작성하면 여기에 나타납니다.
+            </p>
           ) : (
             <div className="space-y-2">
-              {pinnedPostsList.map((post) => (
-                <div key={post.id} className="p-3 bg-gray-50 rounded-lg border border-cordia-teal/20">
-                  <p className="font-semibold text-sm text-cordia-dark">{post.title}</p>
-                  <p className="text-xs text-gray-500 mt-1">{new Date(post.published_date).toLocaleDateString()}</p>
-                </div>
-              ))}
+              {posts.map((post: Post, idx: number) => {
+                const visibleOnHome = idx < count;
+                return (
+                  <div
+                    key={post.id}
+                    className={`flex items-center justify-between gap-4 p-3 rounded-lg border ${
+                      visibleOnHome ? "border-cordia-teal/40 bg-cordia-teal/5" : "border-gray-100 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      {post.is_pinned_home && <Pin className="w-4 h-4 text-cordia-teal shrink-0" />}
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm text-cordia-dark truncate">{post.title}</p>
+                        <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
+                          <Calendar className="w-3 h-3" />
+                          {new Date(post.published_date).toLocaleDateString()}
+                          {visibleOnHome && (
+                            <Badge variant="outline" className="text-[10px] border-cordia-teal/40 text-cordia-teal">
+                              홈에 표시 중
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-xs text-gray-400">고정</span>
+                      <Switch
+                        checked={post.is_pinned_home}
+                        onCheckedChange={(checked) => pinMutation.mutate({ id: post.id, pinned: checked })}
+                        disabled={pinMutation.isPending}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
-          <p className="text-xs text-gray-400 mt-4">
-            게시글 탭에서 각 글의 is_pinned_home 옵션을 활성화하면 홈 게시판에 고정됩니다.
-          </p>
         </CardContent>
       </Card>
     </div>

@@ -134,7 +134,7 @@ export default function AdminPostsTab() {
         image_url: form.imageUrl || null,
         link_url: form.linkUrl || null,
         initiative_slug: board === "news" && form.initiativeSlug ? form.initiativeSlug : null,
-        is_pinned_home: false,
+        is_pinned_home: editing ? editing.is_pinned_home : false,
         published_date: new Date(form.publishedDate).toISOString(),
       };
 
@@ -145,7 +145,7 @@ export default function AdminPostsTab() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin_posts"] });
+      queryClient.invalidateQueries();
       setFormOpen(false);
       toast({ title: editing ? "수정 완료" : "등록 완료" });
     },
@@ -167,7 +167,7 @@ export default function AdminPostsTab() {
       await deletePost(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin_posts"] });
+      queryClient.invalidateQueries();
       setDeleteTarget(null);
       toast({ title: "삭제 완료" });
     },
