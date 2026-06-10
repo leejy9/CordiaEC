@@ -1,7 +1,5 @@
 // Vercel Cron이 3일마다 호출 → Supabase 무료 프로젝트 자동 일시정지 방지
-export default async function handler(_req: unknown, res: {
-  status: (code: number) => { json: (body: unknown) => void };
-}) {
+export default async function handler(_req, res) {
   const url = process.env.VITE_SUPABASE_URL;
   const key = process.env.VITE_SUPABASE_ANON_KEY;
 
