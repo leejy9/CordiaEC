@@ -122,3 +122,12 @@
     border-color: var(--cordia-teal);
   }
 }
+
+/* 페이지 전환 애니메이션: 살짝 떠오르며 페이드인 */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageEnter 0.28s ease-out;
+}

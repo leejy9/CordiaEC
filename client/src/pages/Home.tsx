@@ -5,6 +5,8 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Handshake, Lightbulb, Users, ImageIcon } from "lucide-react";
 import NewsModal from "@/components/modals/NewsModal";
+import HeroCarousel from "@/components/HeroCarousel";
+import PopupDisplay from "@/components/PopupDisplay";
 import { getInitiatives, getHomePosts, getSiteSettings } from "@/lib/queries";
 import type { Post, Initiative } from "@/lib/database.types";
 
@@ -49,37 +51,11 @@ export default function Home() {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80')"
-          }}
-        />
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/40"></div>
+      {/* Popups (게시 기간 내 활성 팝업만 표시) */}
+      <PopupDisplay />
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight" data-testid="text-hero-title">
-              Global Bridges, Rooted in Korean Studies {" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cordia-teal to-cordia-green">
-
-              </span>
-            </h1>
-            <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-4xl mx-auto leading-relaxed" data-testid="text-hero-description">
-              Cordia links knowledge, people, and opportunities for those seeking a deeper understanding of Korea.
-              With expertise rooted in Korean Studies, we provide insights, partnerships, and cultural context that help global audiences connect with Korea in meaningful ways.
-              Our mission is to bridge local expertise with international networks, fostering collaboration across culture, business, and education.
-            </p>
-            <div className="flex justify-center items-center">
-              
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Carousel (admin 히어로 메뉴에서 관리) */}
+      <HeroCarousel />
 
       {/* About Preview Section */}
       <section id="about" className="py-20 bg-white">

@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import type { Initiative, Post, Milestone, Contact } from "./database.types";
+import type { Initiative, Post, Milestone, Contact, HeroSlide, Popup } from "./database.types";
 
 // ============================================================
 // 이니셔티브
@@ -199,6 +199,104 @@ export async function getContacts(): Promise<Contact[]> {
 
 export async function deleteContact(id: string): Promise<void> {
   const { error } = await supabase.from("contacts").delete().eq("id", id);
+  if (error) throw error;
+}
+
+// ============================================================
+// 히어로 슬라이드
+// ============================================================
+export async function getActiveHeroSlides(): Promise<HeroSlide[]> {
+  const { data, error } = await supabase
+    .from("hero_slides")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order");
+  if (error) throw error;
+  return (data ?? []) as HeroSlide[];
+}
+
+export async function getAllHeroSlides(): Promise<HeroSlide[]> {
+  const { data, error } = await supabase
+    .from("hero_slides")
+    .select("*")
+    .order("display_order");
+  if (error) throw error;
+  return (data ?? []) as HeroSlide[];
+}
+
+export async function createHeroSlide(slide: Omit<HeroSlide, "id">): Promise<HeroSlide> {
+  const { data, error } = await supabase
+    .from("hero_slides")
+    .insert(slide as Record<string, unknown>)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as HeroSlide;
+}
+
+export async function updateHeroSlide(
+  id: string,
+  updates: Partial<Omit<HeroSlide, "id">>
+): Promise<void> {
+  const { error } = await supabase
+    .from("hero_slides")
+    .update(updates as Record<string, unknown>)
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteHeroSlide(id: string): Promise<void> {
+  const { error } = await supabase.from("hero_slides").delete().eq("id", id);
+  if (error) throw error;
+}
+
+// ============================================================
+// 팝업
+// ============================================================
+export async function getActivePopups(): Promise<Popup[]> {
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("popups")
+    .select("*")
+    .eq("is_active", true)
+    .lte("starts_at", now)
+    .gte("ends_at", now);
+  if (error) throw error;
+  return (data ?? []) as Popup[];
+}
+
+export async function getAllPopups(): Promise<Popup[]> {
+  const { data, error } = await supabase
+    .from("popups")
+    .select("*")
+    .order("starts_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as Popup[];
+}
+
+export async function createPopup(popup: Omit<Popup, "id">): Promise<Popup> {
+  const { data, error } = await supabase
+    .from("popups")
+    .insert(popup as Record<string, unknown>)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Popup;
+}
+
+export async function updatePopup(
+  id: string,
+  updates: Partial<Omit<Popup, "id">>
+): Promise<void> {
+  const { error } = await supabase
+    .from("popups")
+    .update(updates as Record<string, unknown>)
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function deletePopup(id: string): Promise<void> {
+  const { error } = await supabase.from("popups").delete().eq("id", id);
   if (error) throw error;
 }
 

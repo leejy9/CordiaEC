@@ -1,0 +1,55 @@
+name: Weekly Supabase Backup
+
+on:
+  schedule:
+    # 매주 월요일 00:00 UTC (한국시간 월요일 오전 9시)
+    - cron: "0 0 * * 1"
+  workflow_dispatch: {} # 수동 실행 버튼
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dump tables to JSON
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          # 공개 테이블은 anon key로 충분. contacts(개인정보)까지 백업하려면
+          # SUPABASE_SERVICE_ROLE_KEY 시크릿을 등록하세요 (없으면 contacts는 빈 배열).
+          ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -e
+          mkdir -p backups
+          STAMP=$(date +%Y-%m-%d)
+          KEY="${SERVICE_KEY:-$ANON_KEY}"
+
+          for TABLE in initiatives posts milestones site_settings hero_slides popups contacts; do
+            echo "Backing up $TABLE..."
+            curl -sf "$SUPABASE_URL/rest/v1/$TABLE?select=*" \
+              -H "apikey: $KEY" \
+              -H "Authorization: Bearer $KEY" \
+              -o "backups/${STAMP}_${TABLE}.json" || echo "[]" > "backups/${STAMP}_${TABLE}.json"
+          done
+
+          # Storage 파일 목록도 기록
+          curl -sf "$SUPABASE_URL/storage/v1/object/list/post-images" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"prefix":"","limit":10000}' \
+            -o "backups/${STAMP}_storage_list.json" || true
+
+          # 30개(약 한 달치) 이전 백업은 정리
+          ls -t backups/*.json 2>/dev/null | tail -n +211 | xargs rm -f 2>/dev/null || true
+
+      - name: Commit backups
+        run: |
+          git config user.name "backup-bot"
+          git config user.email "backup-bot@users.noreply.github.com"
+          git add backups/
+          git diff --staged --quiet || git commit -m "Automated backup $(date +%Y-%m-%d)"
+          git push

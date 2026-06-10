@@ -25,20 +25,23 @@ function ScrollToTop() {
 }
 
 function Router() {
+  const [location] = useLocation();
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/about" component={About} />
-      <Route path="/initiatives" component={Initiatives} />
-      <Route path="/initiatives/:slug" component={InitiativeDetail} />
-      <Route path="/news" component={News} />
-      <Route path="/news/:id" component={NewsDetail} />
-      <Route path="/overseas-korean" component={OverseasKorean} />
-      <Route path="/overseas-korean/:id" component={OverseasKoreanDetail} />
-      <Route path="/contact" component={Contact} />
-      <Route path="/admin" component={Admin} />
-      <Route component={NotFound} />
-    </Switch>
+    <div key={location} className="page-enter">
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/about" component={About} />
+        <Route path="/initiatives" component={Initiatives} />
+        <Route path="/initiatives/:slug" component={InitiativeDetail} />
+        <Route path="/news" component={News} />
+        <Route path="/news/:id" component={NewsDetail} />
+        <Route path="/overseas-korean" component={OverseasKorean} />
+        <Route path="/overseas-korean/:id" component={OverseasKoreanDetail} />
+        <Route path="/contact" component={Contact} />
+        <Route path="/admin" component={Admin} />
+        <Route component={NotFound} />
+      </Switch>
+    </div>
   );
 }
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import Layout from "@/components/Layout";
-import { Lock, FileText, Layers, History, LayoutGrid, Mail, LogOut } from "lucide-react";
+import { Lock, FileText, Layers, History, LayoutGrid, Mail, LogOut, Images, Megaphone } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import AdminLoginForm from "@/components/admin/AdminLoginForm";
@@ -10,9 +10,13 @@ import AdminInitiativesTab from "@/components/admin/AdminInitiativesTab";
 import AdminMilestonesTab from "@/components/admin/AdminMilestonesTab";
 import AdminHomeSettingsTab from "@/components/admin/AdminHomeSettingsTab";
 import AdminContactsTab from "@/components/admin/AdminContactsTab";
+import AdminHeroTab from "@/components/admin/AdminHeroTab";
+import AdminPopupsTab from "@/components/admin/AdminPopupsTab";
 
 const MENU = [
   { id: "posts", label: "게시글", icon: FileText },
+  { id: "hero", label: "히어로", icon: Images },
+  { id: "popups", label: "팝업", icon: Megaphone },
   { id: "initiatives", label: "이니셔티브", icon: Layers },
   { id: "milestones", label: "연혁", icon: History },
   { id: "home", label: "홈 게시판", icon: LayoutGrid },
@@ -96,6 +100,8 @@ export default function Admin() {
             {/* Content */}
             <section className="flex-1 min-w-0 w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               {active === "posts" && <AdminPostsTab />}
+              {active === "hero" && <AdminHeroTab />}
+              {active === "popups" && <AdminPopupsTab />}
               {active === "initiatives" && <AdminInitiativesTab />}
               {active === "milestones" && <AdminMilestonesTab />}
               {active === "home" && <AdminHomeSettingsTab />}

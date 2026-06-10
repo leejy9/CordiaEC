@@ -45,6 +45,30 @@ export interface Contact {
   created_at: string;
 }
 
+export interface HeroSlide {
+  id: string;
+  image_url: string;
+  headline: string;
+  sub_lines: string;
+  display_order: number;
+  is_active: boolean;
+}
+
+export type PopupPosition = "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+
+export interface Popup {
+  id: string;
+  title: string;
+  content: string;
+  image_url: string | null;
+  link_url: string | null;
+  position: PopupPosition;
+  width: number;
+  starts_at: string;
+  ends_at: string;
+  is_active: boolean;
+}
+
 // supabase-js가 요구하는 Database 제네릭 타입
 export type Database = {
   public: {
