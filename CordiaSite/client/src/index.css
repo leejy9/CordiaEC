@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* CordiaEC Brand Colors */
+  --cordia-teal: hsl(172, 86%, 43%);
+  --cordia-green: hsl(160, 95%, 39%);
+  --cordia-orange: hsl(24, 95%, 53%);
+  --cordia-blue: hsl(217, 91%, 60%);
+  --cordia-dark: hsl(220, 23%, 18%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .text-cordia-teal {
+    color: var(--cordia-teal);
+  }
+  
+  .text-cordia-green {
+    color: var(--cordia-green);
+  }
+  
+  .text-cordia-orange {
+    color: var(--cordia-orange);
+  }
+  
+  .text-cordia-blue {
+    color: var(--cordia-blue);
+  }
+  
+  .text-cordia-dark {
+    color: var(--cordia-dark);
+  }
+  
+  .bg-cordia-teal {
+    background-color: var(--cordia-teal);
+  }
+  
+  .bg-cordia-green {
+    background-color: var(--cordia-green);
+  }
+  
+  .bg-cordia-orange {
+    background-color: var(--cordia-orange);
+  }
+  
+  .bg-cordia-blue {
+    background-color: var(--cordia-blue);
+  }
+  
+  .bg-cordia-dark {
+    background-color: var(--cordia-dark);
+  }
+  
+  .border-cordia-teal {
+    border-color: var(--cordia-teal);
+  }
+  
+  .hover\:bg-cordia-green:hover {
+    background-color: var(--cordia-green);
+  }
+  
+  .hover\:text-cordia-teal:hover {
+    color: var(--cordia-teal);
+  }
+  
+  .hover\:border-cordia-teal:hover {
+    border-color: var(--cordia-teal);
+  }
+}
