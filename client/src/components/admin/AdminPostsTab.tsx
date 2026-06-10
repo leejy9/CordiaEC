@@ -308,12 +308,15 @@ export default function AdminPostsTab() {
             {board === "news" && (
               <div>
                 <Label>이니셔티브 카테고리</Label>
-                <Select value={form.initiativeSlug} onValueChange={(v) => setForm({ ...form, initiativeSlug: v })}>
+                <Select
+                  value={form.initiativeSlug || "none"}
+                  onValueChange={(v) => setForm({ ...form, initiativeSlug: v === "none" ? "" : v })}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="선택 (선택사항)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">없음</SelectItem>
+                    <SelectItem value="none">없음</SelectItem>
                     {initiatives.map((init) => (
                       <SelectItem key={init.slug} value={init.slug}>
                         {init.label}
