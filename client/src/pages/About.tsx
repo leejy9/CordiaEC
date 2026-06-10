@@ -86,19 +86,27 @@ export default function About() {
             </h2>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div className="max-w-3xl mx-auto mb-16">
             {milestones.map((milestone: Milestone, idx: number) => (
-              <div key={milestone.id} className="text-center">
-                {milestone.image_url && (
-                  <img
-                    src={milestone.image_url}
-                    alt={milestone.title}
-                    className="w-full h-48 object-cover rounded-xl mb-4"
-                    data-testid={`img-milestone-${idx}`}
-                  />
+              <div key={milestone.id} className="relative flex gap-8 pb-14 last:pb-0" data-testid={`row-milestone-${idx}`}>
+                {/* Dotted connector line */}
+                {idx < milestones.length - 1 && (
+                  <div className="absolute left-[60px] top-14 bottom-0 border-l-2 border-dashed border-gray-300" />
                 )}
-                <h3 className="text-lg font-bold text-cordia-dark mb-2">{milestone.title}</h3>
-                <p className="text-gray-600 text-sm">{milestone.description}</p>
+                {/* Year box */}
+                <div className="shrink-0 w-[120px]">
+                  <div className="bg-gradient-to-br from-cordia-blue to-cordia-teal text-white font-bold text-lg text-center py-3 px-2 rounded-tl-2xl rounded-br-2xl shadow-md">
+                    {milestone.period_label}
+                  </div>
+                </div>
+                {/* Content lines */}
+                <div className="flex-1 pt-2 space-y-4">
+                  {milestone.description.split("\n").map((line, i) =>
+                    line.trim() ? (
+                      <p key={i} className="text-gray-700 leading-relaxed">{line.trim()}</p>
+                    ) : null
+                  )}
+                </div>
               </div>
             ))}
           </div>

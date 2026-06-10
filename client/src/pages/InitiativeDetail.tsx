@@ -14,7 +14,7 @@ export default function InitiativeDetail() {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const { data: initiative } = useQuery({
+  const { data: initiative, isLoading: initiativeLoading } = useQuery({
     queryKey: ["initiative", slug],
     queryFn: () => getInitiative(slug!),
     enabled: !!slug,
@@ -33,6 +33,21 @@ export default function InitiativeDetail() {
   });
 
   const articles: Post[] = postsData?.posts ?? [];
+
+  if (initiativeLoading) {
+    return (
+      <Layout>
+        <div className="py-16 container mx-auto px-4 max-w-4xl">
+          <div className="h-8 bg-gray-200 rounded w-24 mb-8 animate-pulse" />
+          <div className="h-64 bg-gray-200 rounded-xl mb-8 animate-pulse" />
+          <div className="h-10 bg-gray-200 rounded w-3/4 mb-4 animate-pulse" />
+          <div className="space-y-3">
+            {[...Array(6)].map((_, i) => <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" />)}
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (!initiative) {
     return (

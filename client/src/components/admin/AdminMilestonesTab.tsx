@@ -36,9 +36,7 @@ export default function AdminMilestonesTab() {
 
   const [form, setForm] = useState({
     periodLabel: "",
-    title: "",
     description: "",
-    imageUrl: "",
   });
 
   const { data: milestones = [] } = useQuery({
@@ -47,7 +45,7 @@ export default function AdminMilestonesTab() {
   });
 
   const openCreate = () => {
-    setForm({ periodLabel: "", title: "", description: "", imageUrl: "" });
+    setForm({ periodLabel: "", description: "" });
     setEditing(null);
     setFormOpen(true);
   };
@@ -56,9 +54,7 @@ export default function AdminMilestonesTab() {
     setEditing(m);
     setForm({
       periodLabel: m.period_label,
-      title: m.title,
       description: m.description,
-      imageUrl: m.image_url || "",
     });
     setFormOpen(true);
   };
@@ -68,16 +64,15 @@ export default function AdminMilestonesTab() {
       if (editing) {
         await updateMilestone(editing.id, {
           period_label: form.periodLabel,
-          title: form.title,
+          title: form.periodLabel,
           description: form.description,
-          image_url: form.imageUrl,
         });
       } else {
         await createMilestone({
           period_label: form.periodLabel,
-          title: form.title,
+          title: form.periodLabel,
           description: form.description,
-          image_url: form.imageUrl,
+          image_url: null,
           display_order: milestones.length + 1,
         });
       }
@@ -120,7 +115,6 @@ export default function AdminMilestonesTab() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["milestones"] });
-      toast({ title: "순서 변경 완료" });
     },
   });
 
@@ -128,40 +122,38 @@ export default function AdminMilestonesTab() {
     if (index === 0) return;
     const newOrder = [...milestones];
     [newOrder[index], newOrder[index - 1]] = [newOrder[index - 1], newOrder[index]];
-    reorderMutation.mutate(
-      newOrder.map((m, i) => ({ id: m.id, order: i + 1 }))
-    );
+    reorderMutation.mutate(newOrder.map((m, i) => ({ id: m.id, order: i + 1 })));
   };
 
   const moveDown = (index: number) => {
     if (index === milestones.length - 1) return;
     const newOrder = [...milestones];
     [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
-    reorderMutation.mutate(
-      newOrder.map((m, i) => ({ id: m.id, order: i + 1 }))
-    );
+    reorderMutation.mutate(newOrder.map((m, i) => ({ id: m.id, order: i + 1 })));
   };
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-cordia-dark">연혁</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-bold text-cordia-dark">연혁 (About 페이지 하단)</h2>
         <Button onClick={openCreate} className="bg-cordia-teal hover:bg-cordia-green text-white">
           <Plus className="w-4 h-4 mr-2" />
           새 항목
         </Button>
       </div>
+      <p className="text-sm text-gray-500 mb-6">
+        연도 박스와 내용을 입력하세요. 내용을 여러 줄로 쓰면 한 연도 아래 여러 항목으로 표시됩니다.
+      </p>
 
       <div className="space-y-3">
         {milestones.map((m, idx) => (
           <Card key={m.id} className="border border-gray-100">
             <CardContent className="p-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                {m.image_url && <img src={m.image_url} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />}
-                <div className="min-w-0">
-                  <p className="font-semibold text-cordia-dark">{m.period_label}</p>
-                  <p className="text-sm text-gray-600 truncate">{m.title}</p>
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <div className="shrink-0 bg-gradient-to-br from-cordia-blue to-cordia-teal text-white text-sm font-bold px-3 py-2 rounded-tl-xl rounded-br-xl">
+                  {m.period_label}
                 </div>
+                <p className="text-sm text-gray-600 truncate">{m.description.split("\n")[0]}</p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <Button
@@ -195,42 +187,34 @@ export default function AdminMilestonesTab() {
             </CardContent>
           </Card>
         ))}
+        {milestones.length === 0 && (
+          <div className="text-center py-16 text-gray-400">아직 연혁 항목이 없습니다.</div>
+        )}
       </div>
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-xl">
           <DialogHeader>
             <DialogTitle>{editing ? "연혁 수정" : "새 연혁 항목"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
-              <Label>시기 라벨</Label>
+              <Label>연도 박스 *</Label>
               <Input
                 value={form.periodLabel}
                 onChange={(e) => setForm({ ...form, periodLabel: e.target.value })}
-                placeholder="예: Founded in 1985"
+                placeholder="예: 2007년"
               />
             </div>
             <div>
-              <Label>제목</Label>
-              <Input
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="제목"
-              />
-            </div>
-            <div>
-              <Label>설명</Label>
+              <Label>내용 *</Label>
               <Textarea
-                rows={3}
+                rows={5}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="설명"
+                placeholder={"한 줄에 하나씩 입력하세요.\n예:\n이주 및 재외동포센터 설립\n하와이동포 모국공적 조사사업"}
               />
-            </div>
-            <div>
-              <Label>이미지 URL</Label>
-              <Input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} />
+              <p className="text-xs text-gray-400 mt-1">줄바꿈하면 같은 연도 아래 여러 항목으로 표시됩니다.</p>
             </div>
           </div>
           <DialogFooter>
@@ -240,7 +224,7 @@ export default function AdminMilestonesTab() {
             <Button
               className="bg-cordia-teal hover:bg-cordia-green text-white"
               onClick={() => saveMutation.mutate()}
-              disabled={saveMutation.isPending}
+              disabled={saveMutation.isPending || !form.periodLabel.trim() || !form.description.trim()}
             >
               {saveMutation.isPending ? "저장 중..." : "저장"}
             </Button>

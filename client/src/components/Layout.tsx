@@ -167,6 +167,11 @@ export default function Layout({ children }: LayoutProps) {
               <a href="#" className="text-gray-400 hover:text-cordia-teal transition-colors text-sm">
                 Terms of Service
               </a>
+              <Link href="/admin">
+                <span className="text-gray-400 hover:text-cordia-teal transition-colors text-sm cursor-pointer" data-testid="link-admin">
+                  Admin
+                </span>
+              </Link>
             </div>
           </div>
         </div>
