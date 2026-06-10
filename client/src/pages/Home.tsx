@@ -6,18 +6,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Handshake, Lightbulb, Users } from "lucide-react";
 import NewsModal from "@/components/modals/NewsModal";
-import type { NewsArticle } from "@shared/schema";
-import { INITIATIVE_DEFAULTS, INITIATIVE_SLUGS } from "@/lib/initiativesData";
+import { getInitiatives, getHomePosts, getSiteSettings } from "@/lib/queries";
+import type { Post, Initiative } from "@/lib/database.types";
+
+export type NewsArticle = Post;
 
 export default function Home() {
-  const [selectedNews, setSelectedNews] = useState<NewsArticle | null>(null);
+  const [selectedNews, setSelectedNews] = useState<Post | null>(null);
   const [newsModalOpen, setNewsModalOpen] = useState(false);
 
-  const { data: newsData } = useQuery({
-    queryKey: ["/api/news?page=1&limit=3"], 
+  const { data: initiatives = [] } = useQuery({
+    queryKey: ["initiatives"],
+    queryFn: getInitiatives,
   });
 
-  const newsArticles = (newsData as any)?.articles || [];
+  const { data: settings = {} } = useQuery({
+    queryKey: ["site_settings"],
+    queryFn: async () => {
+      const s = await getSiteSettings();
+      return s;
+    },
+  });
+
+  const homeCount = parseInt(settings.home_board_count || "3", 10);
+
+  const { data: newsArticles = [] } = useQuery({
+    queryKey: ["home_posts", homeCount],
+    queryFn: () => getHomePosts(homeCount),
+  });
 
 
   const openNewsModal = (article: NewsArticle) => {
@@ -153,28 +169,25 @@ export default function Home() {
           {/* Six Initiatives Grid */}
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-              {INITIATIVE_SLUGS.map((slug) => {
-                const card = INITIATIVE_DEFAULTS[slug];
-                return (
-                  <Link
-                    key={slug}
-                    href={`/initiatives/${slug}`}
-                    className="text-center group"
-                    data-testid={`link-home-initiative-${slug}`}
-                  >
-                    <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
-                      <img
-                        src={card.imageUrl}
-                        alt={card.label}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <h3 className="text-sm font-semibold text-cordia-dark group-hover:text-cordia-teal transition-colors">
-                      {card.label}
-                    </h3>
-                  </Link>
-                );
-              })}
+              {initiatives.map((init: Initiative) => (
+                <Link
+                  key={init.slug}
+                  href={`/initiatives/${init.slug}`}
+                  className="text-center group"
+                  data-testid={`link-home-initiative-${init.slug}`}
+                >
+                  <div className="w-full aspect-square mb-2 rounded-xl overflow-hidden shadow-lg">
+                    <img
+                      src={init.image_url || ""}
+                      alt={init.label}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <h3 className="text-sm font-semibold text-cordia-dark group-hover:text-cordia-teal transition-colors">
+                    {init.label}
+                  </h3>
+                </Link>
+              ))}
             </div>
           </div>
 
@@ -211,10 +224,10 @@ export default function Home() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {newsArticles.map((article: NewsArticle) => (
+                    {newsArticles.map((article: Post) => (
                       <tr key={article.id} className="hover:bg-gray-50 transition-colors" data-testid={`row-news-${article.id}`}>
                         <td className="px-6 py-4">
-                          <div 
+                          <div
                             className="cursor-pointer"
                             onClick={() => openNewsModal(article)}
                           >
@@ -227,7 +240,7 @@ export default function Home() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600" data-testid={`text-news-date-${article.id}`}>
-                          {new Date(article.publishedDate).toLocaleDateString()}
+                          {new Date(article.published_date).toLocaleDateString()}
                         </td>
                       </tr>
                     ))}

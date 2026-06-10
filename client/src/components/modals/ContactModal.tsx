@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import {
   Dialog,
@@ -21,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { submitContact } from "@/lib/queries";
 
 const contactFormSchema = z.object({
   name: z.string().min(1, "Name is required").min(2, "Name must be at least 2 characters"),
@@ -39,8 +38,7 @@ interface ContactModalProps {
 
 export default function ContactModal({ open, onOpenChange, defaultSubject }: ContactModalProps) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  
+
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -51,10 +49,7 @@ export default function ContactModal({ open, onOpenChange, defaultSubject }: Con
   });
 
   const contactMutation = useMutation({
-    mutationFn: async (data: ContactFormData) => {
-      const response = await apiRequest("POST", "/api/contacts", data);
-      return response.json();
-    },
+    mutationFn: submitContact,
     onSuccess: () => {
       toast({
         title: "Message Sent Successfully",
@@ -62,7 +57,6 @@ export default function ContactModal({ open, onOpenChange, defaultSubject }: Con
       });
       form.reset();
       onOpenChange(false);
-      queryClient.invalidateQueries({ queryKey: ["/api/contacts"] });
     },
     onError: (error: any) => {
       toast({

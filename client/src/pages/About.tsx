@@ -1,6 +1,13 @@
+import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
+import { getMilestones } from "@/lib/queries";
+import type { Milestone } from "@/lib/database.types";
 
 export default function About() {
+  const { data: milestones = [] } = useQuery({
+    queryKey: ["milestones"],
+    queryFn: getMilestones,
+  });
   return (
     <Layout>
       {/* About Hero Section */}
@@ -80,50 +87,20 @@ export default function About() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {/* Timeline Items */}
-            <div className="text-center">
-              <img 
-                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200"
-                alt="Modern office building representing company establishment"
-                className="w-full h-48 object-cover rounded-xl mb-4"
-                data-testid="img-founded"
-              />
-              <h3 className="text-lg font-bold text-cordia-dark mb-2">Founded in 1985</h3>
-              <p className="text-gray-600 text-sm">Inha University Institute of International Relations established</p>
-            </div>
-            
-            <div className="text-center">
-              <img 
-                src="https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200"
-                alt="Asian expansion and regional office establishment"
-                className="w-full h-48 object-cover rounded-xl mb-4"
-                data-testid="img-expansion"
-              />
-              <h3 className="text-lg font-bold text-cordia-dark mb-2">Expanded in 2022</h3>
-              <p className="text-gray-600 text-sm">K-Academic Diffusion Research Center launched to expand academic and cultural initiatives</p>
-            </div>
-            
-            <div className="text-center">
-              <img 
-                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200"
-                alt="Innovation platform and technology development"
-                className="w-full h-48 object-cover rounded-xl mb-4"
-                data-testid="img-flagship"
-              />
-              <h3 className="text-lg font-bold text-cordia-dark mb-2">New beginning in 2025</h3>
-              <p className="text-gray-600 text-sm">Cordia founded as a global hub, connecting expertise in Korean Studies with business and cultural opportunities</p>
-            </div>
-            
-            <div className="text-center">
-              <img 
-                src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200"
-                alt="Global client network and international partnerships"
-                className="w-full h-48 object-cover rounded-xl mb-4"
-                data-testid="img-milestone"
-              />
-              <h3 className="text-lg font-bold text-cordia-dark mb-2">Today & Beyond</h3>
-              <p className="text-gray-600 text-sm">Growing into a trusted platform for global networks and cross-border collaboration</p>
-            </div>
+            {milestones.map((milestone: Milestone, idx: number) => (
+              <div key={milestone.id} className="text-center">
+                {milestone.image_url && (
+                  <img
+                    src={milestone.image_url}
+                    alt={milestone.title}
+                    className="w-full h-48 object-cover rounded-xl mb-4"
+                    data-testid={`img-milestone-${idx}`}
+                  />
+                )}
+                <h3 className="text-lg font-bold text-cordia-dark mb-2">{milestone.title}</h3>
+                <p className="text-gray-600 text-sm">{milestone.description}</p>
+              </div>
+            ))}
           </div>
           
           <div className="text-center">

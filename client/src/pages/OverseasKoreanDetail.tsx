@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, ExternalLink } from "lucide-react";
-import type { OverseasKoreanPost } from "@shared/schema";
+import { getPost } from "@/lib/queries";
+import type { Post } from "@/lib/database.types";
 
 export default function OverseasKoreanDetail() {
   const { id } = useParams<{ id: string }>();
@@ -12,16 +13,11 @@ export default function OverseasKoreanDetail() {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const { data, isLoading, isError } = useQuery<{ success: boolean; post: OverseasKoreanPost }>({
-    queryKey: ["/api/overseas-korean", id],
-    queryFn: async () => {
-      const res = await fetch(`/api/overseas-korean/${id}`);
-      if (!res.ok) throw new Error("Not found");
-      return res.json();
-    },
+  const { data: post, isLoading, isError } = useQuery<Post | null>({
+    queryKey: ["post", id],
+    queryFn: () => getPost(id!),
+    enabled: !!id,
   });
-
-  const post = data?.post;
 
   if (isLoading) {
     return (
@@ -63,9 +59,9 @@ export default function OverseasKoreanDetail() {
             <ArrowLeft className="w-4 h-4 mr-2" />K-Diaspora 목록
           </Button>
 
-          {post.imageUrl && (
+          {post.image_url && (
             <img
-              src={post.imageUrl}
+              src={post.image_url}
               alt={post.title}
               className="w-full max-h-96 object-cover rounded-2xl mb-8"
             />
@@ -73,7 +69,7 @@ export default function OverseasKoreanDetail() {
 
           <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
             <Calendar className="w-4 h-4" />
-            <span>{new Date(post.publishedDate).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}</span>
+            <span>{new Date(post.published_date).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" })}</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-6 leading-tight">
@@ -90,10 +86,10 @@ export default function OverseasKoreanDetail() {
             )}
           </div>
 
-          {post.linkUrl && (
+          {post.link_url && (
             <div className="mt-10 pt-8 border-t">
               <a
-                href={post.linkUrl}
+                href={post.link_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-cordia-teal text-white px-6 py-3 rounded-xl hover:bg-cordia-green transition-colors font-medium"

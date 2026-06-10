@@ -5,8 +5,8 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, ChevronRight, ImageIcon } from "lucide-react";
-import { INITIATIVE_DEFAULTS } from "@/lib/initiativesData";
-import type { NewsArticle } from "@shared/schema";
+import { getInitiative, getPosts } from "@/lib/queries";
+import type { Post } from "@/lib/database.types";
 
 export default function InitiativeDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -14,19 +14,25 @@ export default function InitiativeDetail() {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  const initiative = slug ? INITIATIVE_DEFAULTS[slug] : undefined;
-
-  const { data: newsData, isLoading: newsLoading } = useQuery({
-    queryKey: ["/api/news", { category: slug }],
-    queryFn: async () => {
-      const res = await fetch(`/api/news?page=1&limit=100&category=${encodeURIComponent(slug!)}`);
-      if (!res.ok) throw new Error("Failed");
-      return res.json();
-    },
+  const { data: initiative } = useQuery({
+    queryKey: ["initiative", slug],
+    queryFn: () => getInitiative(slug!),
     enabled: !!slug,
   });
 
-  const articles: NewsArticle[] = newsData?.articles || [];
+  const { data: postsData, isLoading: newsLoading } = useQuery({
+    queryKey: ["posts_by_initiative", slug],
+    queryFn: () =>
+      getPosts({
+        board: "news",
+        initiativeSlug: slug,
+        page: 1,
+        limit: 100,
+      }),
+    enabled: !!slug,
+  });
+
+  const articles: Post[] = postsData?.posts ?? [];
 
   if (!initiative) {
     return (
@@ -54,29 +60,33 @@ export default function InitiativeDetail() {
             <ArrowLeft className="w-4 h-4 mr-2" />이니셔티브 목록
           </Button>
 
-          <img
-            src={initiative.imageUrl}
-            alt={initiative.title}
-            className="w-full max-h-96 object-cover rounded-2xl mb-8"
-          />
+          {initiative && (
+            <>
+              <img
+                src={initiative.image_url || ""}
+                alt={initiative.title}
+                className="w-full max-h-96 object-cover rounded-2xl mb-8"
+              />
 
-          <Badge className="bg-cordia-teal/10 text-cordia-teal border-cordia-teal/20 mb-4">
-            {initiative.category}
-          </Badge>
+              <Badge className="bg-cordia-teal/10 text-cordia-teal border-cordia-teal/20 mb-4">
+                {initiative.category}
+              </Badge>
 
-          <h1 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-6 leading-tight">
-            {initiative.title}
-          </h1>
+              <h1 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-6 leading-tight">
+                {initiative.title}
+              </h1>
 
-          <p className="text-lg text-gray-500 border-l-4 border-cordia-teal pl-4 mb-8 italic">
-            {initiative.description}
-          </p>
+              <p className="text-lg text-gray-500 border-l-4 border-cordia-teal pl-4 mb-8 italic">
+                {initiative.description}
+              </p>
 
-          <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed mb-12">
-            {initiative.content.split("\n").map((p, i) =>
-              p.trim() ? <p key={i} className="mb-4">{p.trim()}</p> : null
-            )}
-          </div>
+              <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed mb-12">
+                {initiative.content.split("\n").map((p, i) =>
+                  p.trim() ? <p key={i} className="mb-4">{p.trim()}</p> : null
+                )}
+              </div>
+            </>
+          )}
 
           {/* Related News */}
           <div className="border-t pt-10">
@@ -103,8 +113,8 @@ export default function InitiativeDetail() {
                     data-testid={`row-related-news-${article.id}`}
                   >
                     <div className="w-32 h-20 rounded-lg overflow-hidden shrink-0 bg-gray-100 flex items-center justify-center">
-                      {article.imageUrl ? (
-                        <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover" />
+                      {article.image_url ? (
+                        <img src={article.image_url} alt={article.title} className="w-full h-full object-cover" />
                       ) : (
                         <ImageIcon className="w-7 h-7 text-gray-300" />
                       )}
@@ -118,7 +128,7 @@ export default function InitiativeDetail() {
                     <div className="shrink-0 flex flex-col items-end gap-2 text-xs text-gray-400 min-w-[100px]">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {new Date(article.publishedDate).toLocaleDateString("ko-KR")}
+                        {new Date(article.published_date).toLocaleDateString("ko-KR")}
                       </span>
                     </div>
                     <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-cordia-teal shrink-0" />

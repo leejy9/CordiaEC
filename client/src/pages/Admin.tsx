@@ -1,461 +1,39 @@
-import { useState, useRef } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
+import { useState } from "react";
+import { useLocation } from "wouter";
 import Layout from "@/components/Layout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Label } from "@/components/ui/label";
-import { Plus, Pencil, Trash2, Lock, Calendar, ExternalLink, Upload, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import type { NewsArticle, OverseasKoreanPost } from "@shared/schema";
-import { INITIATIVE_DEFAULTS, INITIATIVE_SLUGS } from "@/lib/initiativesData";
+import { Lock } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
+import AdminLoginForm from "@/components/admin/AdminLoginForm";
+import AdminPostsTab from "@/components/admin/AdminPostsTab";
+import AdminInitiativesTab from "@/components/admin/AdminInitiativesTab";
+import AdminMilestonesTab from "@/components/admin/AdminMilestonesTab";
+import AdminHomeSettingsTab from "@/components/admin/AdminHomeSettingsTab";
+import AdminContactsTab from "@/components/admin/AdminContactsTab";
 
-const ADMIN_PASSWORD = "cordia2025";
-
-// ---- Shared Image Upload Component ----
-function ImageUpload({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (val: string) => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      alert("이미지 크기는 5MB 이하여야 합니다.");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onloadend = () => onChange(reader.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  return (
-    <div className="space-y-2">
-      <Label>이미지 (선택)</Label>
-      {value ? (
-        <div className="relative inline-block">
-          <img src={value} alt="preview" className="w-full max-h-48 object-cover rounded-lg border" />
-          <button
-            type="button"
-            onClick={() => { onChange(""); if (inputRef.current) inputRef.current.value = ""; }}
-            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-          >
-            <X className="w-3 h-3" />
-          </button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-cordia-teal hover:bg-cordia-teal/5 transition-colors cursor-pointer"
-        >
-          <Upload className="w-6 h-6 text-gray-400" />
-          <span className="text-sm text-gray-500">클릭하여 이미지 업로드</span>
-          <span className="text-xs text-gray-400">JPG, PNG, GIF · 최대 5MB</span>
-        </button>
-      )}
-      <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
-    </div>
-  );
-}
-
-// ---- Shared Form Fields ----
-interface CommonForm {
-  title: string;
-  excerpt: string;
-  content: string;
-  imageUrl: string;
-  linkUrl: string;
-  publishedDate: string;
-}
-
-function CommonFields({
-  form,
-  setForm,
-}: {
-  form: CommonForm;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
-}) {
-  return (
-    <>
-      <div>
-        <Label>제목 *</Label>
-        <Input value={form.title} onChange={e => setForm((f: any) => ({ ...f, title: e.target.value }))} placeholder="제목을 입력하세요" />
-      </div>
-      <div>
-        <Label>요약 *</Label>
-        <Textarea rows={2} value={form.excerpt} onChange={e => setForm((f: any) => ({ ...f, excerpt: e.target.value }))} placeholder="간단한 요약 (목록 화면에 표시)" />
-      </div>
-      <div>
-        <Label>본문 *</Label>
-        <Textarea rows={7} value={form.content} onChange={e => setForm((f: any) => ({ ...f, content: e.target.value }))} placeholder="본문 내용" />
-      </div>
-      <ImageUpload value={form.imageUrl} onChange={val => setForm((f: any) => ({ ...f, imageUrl: val }))} />
-      <div>
-        <Label>외부 링크 (선택)</Label>
-        <Input value={form.linkUrl} onChange={e => setForm((f: any) => ({ ...f, linkUrl: e.target.value }))} placeholder="https://..." />
-      </div>
-      <div>
-        <Label>발행일자 *</Label>
-        <Input type="date" value={form.publishedDate} onChange={e => setForm((f: any) => ({ ...f, publishedDate: e.target.value }))} />
-      </div>
-    </>
-  );
-}
-
-function isCommonFormValid(form: CommonForm) {
-  return !!(form.title && form.excerpt && form.content && form.publishedDate);
-}
-
-// ---- Login Gate ----
-function LoginGate({ onLogin }: { onLogin: () => void }) {
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem("admin_auth", "true");
-      onLogin();
-    } else {
-      setError(true);
-      setPassword("");
-    }
-  };
-
-  return (
-    <Layout>
-      <div className="min-h-[80vh] flex items-center justify-center bg-gray-50">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="bg-cordia-teal/10 rounded-full p-4">
-                <Lock className="w-8 h-8 text-cordia-teal" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl font-bold text-cordia-dark">Admin Access</CardTitle>
-            <p className="text-gray-500 text-sm mt-1">관리자 비밀번호를 입력하세요</p>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={e => { setPassword(e.target.value); setError(false); }}
-                  placeholder="비밀번호 입력"
-                  className={error ? "border-red-500" : ""}
-                />
-                {error && <p className="text-red-500 text-sm mt-1">비밀번호가 틀렸습니다.</p>}
-              </div>
-              <Button type="submit" className="w-full bg-cordia-teal hover:bg-cordia-green text-white">로그인</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </Layout>
-  );
-}
-
-// ---- News Tab ----
-interface NewsForm extends CommonForm {
-  category: string;
-}
-
-function NewsTab() {
-  const { toast } = useToast();
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<NewsArticle | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const defaultForm: NewsForm = { title: "", excerpt: "", content: "", imageUrl: "", linkUrl: "", publishedDate: new Date().toISOString().split("T")[0], category: "" };
-  const [form, setForm] = useState<NewsForm>(defaultForm);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["/api/news", 1, 100],
-    queryFn: async () => (await fetch("/api/news?page=1&limit=100")).json(),
-  });
-  const articles: NewsArticle[] = data?.articles || [];
-
-  const openCreate = () => { setForm(defaultForm); setEditing(null); setFormOpen(true); };
-  const openEdit = (a: NewsArticle) => {
-    setEditing(a);
-    setForm({
-      title: a.title, excerpt: a.excerpt, content: a.content,
-      imageUrl: a.imageUrl || "", linkUrl: a.linkUrl || "",
-      publishedDate: new Date(a.publishedDate).toISOString().split("T")[0],
-      category: a.category || "",
-    });
-    setFormOpen(true);
-  };
-
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      const payload = {
-        title: form.title, excerpt: form.excerpt, content: form.content,
-        imageUrl: form.imageUrl || null, linkUrl: form.linkUrl || null,
-        publishedDate: new Date(form.publishedDate).toISOString(),
-        category: form.category || null,
-      };
-      const url = editing ? `/api/news/${editing.id}` : "/api/news";
-      const res = await fetch(url, { method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error();
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/news"] }); setFormOpen(false); toast({ title: editing ? "수정 완료" : "등록 완료" }); },
-    onError: () => toast({ title: "오류", description: "저장에 실패했습니다.", variant: "destructive" }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => { const res = await fetch(`/api/news/${id}`, { method: "DELETE" }); if (!res.ok) throw new Error(); },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/news"] }); setDeleteTarget(null); toast({ title: "삭제 완료" }); },
-    onError: () => toast({ title: "오류", description: "삭제에 실패했습니다.", variant: "destructive" }),
-  });
-
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-cordia-dark">뉴스 <Badge variant="secondary">{articles.length}</Badge></h2>
-        <Button onClick={openCreate} className="bg-cordia-teal hover:bg-cordia-green text-white" data-testid="button-new-news"><Plus className="w-4 h-4 mr-2" />새 글</Button>
-      </div>
-      {isLoading ? <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)}</div>
-        : articles.length === 0 ? <div className="text-center py-16 text-gray-400">아직 게시글이 없습니다.</div>
-        : (
-          <div className="space-y-3">
-            {articles.map(a => {
-              const cat = a.category;
-              const catLabel = cat ? INITIATIVE_DEFAULTS[cat]?.label : null;
-              return (
-                <Card key={a.id} className="border border-gray-100">
-                  <CardContent className="p-4 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      {a.imageUrl && <img src={a.imageUrl} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />}
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold text-cordia-dark truncate">{a.title}</p>
-                          {catLabel && <Badge variant="outline" className="text-xs shrink-0 border-cordia-teal/30 text-cordia-teal">{catLabel}</Badge>}
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
-                          <Calendar className="w-3 h-3" />{new Date(a.publishedDate).toLocaleDateString()}
-                          {a.linkUrl && <span className="flex items-center gap-1 text-cordia-teal"><ExternalLink className="w-3 h-3" />링크 있음</span>}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 shrink-0">
-                      <Button variant="outline" size="sm" onClick={() => openEdit(a)}><Pencil className="w-4 h-4" /></Button>
-                      <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600" onClick={() => setDeleteTarget(a.id)}><Trash2 className="w-4 h-4" /></Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editing ? "뉴스 수정" : "새 뉴스 등록"}</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-2">
-            <CommonFields form={form} setForm={setForm} />
-            <div>
-              <Label>이니셔티브 카테고리 <span className="text-xs text-gray-400">(선택, 해당 이니셔티브 페이지에 표시됨)</span></Label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                <button
-                  type="button"
-                  onClick={() => setForm(f => ({ ...f, category: "" }))}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                    form.category === ""
-                      ? "bg-gray-700 text-white border-gray-700"
-                      : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
-                  }`}
-                  data-testid="button-category-none"
-                >
-                  없음
-                </button>
-                {INITIATIVE_SLUGS.map(slug => {
-                  const info = INITIATIVE_DEFAULTS[slug];
-                  return (
-                    <button
-                      key={slug}
-                      type="button"
-                      onClick={() => setForm(f => ({ ...f, category: slug }))}
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
-                        form.category === slug
-                          ? "bg-cordia-teal text-white border-cordia-teal shadow-sm"
-                          : "bg-white text-gray-600 border-gray-200 hover:border-cordia-teal hover:text-cordia-teal"
-                      }`}
-                      data-testid={`button-category-${slug}`}
-                    >
-                      {info.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setFormOpen(false)}>취소</Button>
-            <Button className="bg-cordia-teal hover:bg-cordia-green text-white" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending || !isCommonFormValid(form)}>
-              {saveMutation.isPending ? "저장 중..." : "저장"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <AlertDialog open={!!deleteTarget} onOpenChange={open => !open && setDeleteTarget(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader><AlertDialogTitle>삭제하시겠습니까?</AlertDialogTitle><AlertDialogDescription>이 작업은 되돌릴 수 없습니다.</AlertDialogDescription></AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget)}>삭제</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  );
-}
-
-// ---- K-Diaspora Tab ----
-function OverseasKoreanTab() {
-  const { toast } = useToast();
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<OverseasKoreanPost | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const defaultForm: CommonForm = { title: "", excerpt: "", content: "", imageUrl: "", linkUrl: "", publishedDate: new Date().toISOString().split("T")[0] };
-  const [form, setForm] = useState<CommonForm>(defaultForm);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["/api/overseas-korean", 1, 100],
-    queryFn: async () => (await fetch("/api/overseas-korean?page=1&limit=100")).json(),
-  });
-  const posts: OverseasKoreanPost[] = data?.posts || [];
-
-  const openCreate = () => { setForm(defaultForm); setEditing(null); setFormOpen(true); };
-  const openEdit = (p: OverseasKoreanPost) => {
-    setEditing(p);
-    setForm({
-      title: p.title, excerpt: p.excerpt, content: p.content,
-      imageUrl: p.imageUrl || "", linkUrl: p.linkUrl || "",
-      publishedDate: new Date(p.publishedDate).toISOString().split("T")[0],
-    });
-    setFormOpen(true);
-  };
-
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      const payload = {
-        title: form.title, excerpt: form.excerpt, content: form.content,
-        imageUrl: form.imageUrl || null, linkUrl: form.linkUrl || null,
-        publishedDate: new Date(form.publishedDate).toISOString(),
-      };
-      const url = editing ? `/api/overseas-korean/${editing.id}` : "/api/overseas-korean";
-      const res = await fetch(url, { method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error();
-    },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/overseas-korean"] }); setFormOpen(false); toast({ title: editing ? "수정 완료" : "등록 완료" }); },
-    onError: () => toast({ title: "오류", description: "저장에 실패했습니다.", variant: "destructive" }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => { const res = await fetch(`/api/overseas-korean/${id}`, { method: "DELETE" }); if (!res.ok) throw new Error(); },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["/api/overseas-korean"] }); setDeleteTarget(null); toast({ title: "삭제 완료" }); },
-    onError: () => toast({ title: "오류", description: "삭제에 실패했습니다.", variant: "destructive" }),
-  });
-
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-cordia-dark">K-Diaspora <Badge variant="secondary">{posts.length}</Badge></h2>
-        <Button onClick={openCreate} className="bg-cordia-teal hover:bg-cordia-green text-white"><Plus className="w-4 h-4 mr-2" />새 글</Button>
-      </div>
-      {isLoading ? <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />)}</div>
-        : posts.length === 0 ? <div className="text-center py-16 text-gray-400">아직 게시글이 없습니다.</div>
-        : (
-          <div className="space-y-3">
-            {posts.map(p => (
-              <Card key={p.id} className="border border-gray-100">
-                <CardContent className="p-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {p.imageUrl && <img src={p.imageUrl} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />}
-                    <div className="min-w-0">
-                      <p className="font-semibold text-cordia-dark truncate">{p.title}</p>
-                      <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
-                        <Calendar className="w-3 h-3" />{new Date(p.publishedDate).toLocaleDateString()}
-                        {p.linkUrl && <span className="flex items-center gap-1 text-cordia-teal"><ExternalLink className="w-3 h-3" />링크 있음</span>}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <Button variant="outline" size="sm" onClick={() => openEdit(p)}><Pencil className="w-4 h-4" /></Button>
-                    <Button variant="outline" size="sm" className="text-red-500 hover:text-red-600" onClick={() => setDeleteTarget(p.id)}><Trash2 className="w-4 h-4" /></Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>{editing ? "게시글 수정" : "새 게시글 등록"}</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-2">
-            <CommonFields form={form} setForm={setForm} />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setFormOpen(false)}>취소</Button>
-            <Button className="bg-cordia-teal hover:bg-cordia-green text-white" onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending || !isCommonFormValid(form)}>
-              {saveMutation.isPending ? "저장 중..." : "저장"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <AlertDialog open={!!deleteTarget} onOpenChange={open => !open && setDeleteTarget(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader><AlertDialogTitle>삭제하시겠습니까?</AlertDialogTitle><AlertDialogDescription>이 작업은 되돌릴 수 없습니다.</AlertDialogDescription></AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-            <AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget)}>삭제</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  );
-}
-
-// ---- Main Admin Page ----
 export default function Admin() {
-  const [authenticated, setAuthenticated] = useState(
-    () => sessionStorage.getItem("admin_auth") === "true"
-  );
+  const { user, loading } = useAuth();
+  const [, navigate] = useLocation();
 
-  if (!authenticated) return <LoginGate onLogin={() => setAuthenticated(true)} />;
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="min-h-[80vh] flex items-center justify-center">
+          <div className="text-gray-400">Loading...</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!user) {
+    return <AdminLoginForm />;
+  }
 
   return (
     <Layout>
@@ -465,23 +43,46 @@ export default function Admin() {
             <div>
               <h1 className="text-3xl font-bold text-cordia-dark">관리자 패널</h1>
               <p className="text-gray-500 mt-1">모든 게시판 콘텐츠를 관리하세요</p>
+              <p className="text-sm text-gray-400 mt-2">{user.email}</p>
             </div>
-            <Button variant="outline" onClick={() => { sessionStorage.removeItem("admin_auth"); setAuthenticated(false); }}>
-              <Lock className="w-4 h-4 mr-2" />로그아웃
-            </Button>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
+            >
+              <Lock className="w-4 h-4" />
+              로그아웃
+            </button>
           </div>
 
-          <Tabs defaultValue="news">
+          <Tabs defaultValue="posts" className="w-full">
             <TabsList className="mb-6">
-              <TabsTrigger value="news" data-testid="tab-news">뉴스</TabsTrigger>
-              <TabsTrigger value="overseas" data-testid="tab-overseas">K-Diaspora</TabsTrigger>
+              <TabsTrigger value="posts">게시글</TabsTrigger>
+              <TabsTrigger value="initiatives">이니셔티브</TabsTrigger>
+              <TabsTrigger value="milestones">연혁</TabsTrigger>
+              <TabsTrigger value="home">홈 게시판</TabsTrigger>
+              <TabsTrigger value="contacts">문의함</TabsTrigger>
             </TabsList>
-            <TabsContent value="news"><NewsTab /></TabsContent>
-            <TabsContent value="overseas"><OverseasKoreanTab /></TabsContent>
+
+            <TabsContent value="posts">
+              <AdminPostsTab />
+            </TabsContent>
+
+            <TabsContent value="initiatives">
+              <AdminInitiativesTab />
+            </TabsContent>
+
+            <TabsContent value="milestones">
+              <AdminMilestonesTab />
+            </TabsContent>
+
+            <TabsContent value="home">
+              <AdminHomeSettingsTab />
+            </TabsContent>
+
+            <TabsContent value="contacts">
+              <AdminContactsTab />
+            </TabsContent>
           </Tabs>
-          <p className="text-xs text-gray-400 mt-6">
-            이니셔티브는 코드에 고정되어 있습니다. 뉴스를 작성할 때 카테고리를 지정하면 해당 이니셔티브 페이지에 자동으로 표시됩니다.
-          </p>
         </div>
       </div>
     </Layout>
