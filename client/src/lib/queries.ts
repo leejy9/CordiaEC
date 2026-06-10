@@ -38,7 +38,7 @@ export async function updateInitiative(
 // 게시글
 // ============================================================
 export async function getPosts(opts: {
-  board: "news" | "diaspora";
+  board?: "news" | "diaspora";  // 생략하면 모든 게시판
   page?: number;
   limit?: number;
   initiativeSlug?: string;
@@ -51,10 +51,10 @@ export async function getPosts(opts: {
   let query = supabase
     .from("posts")
     .select("*", { count: "exact" })
-    .eq("board", board)
     .order("published_date", { ascending: false })
     .range(from, to);
 
+  if (board) query = query.eq("board", board);
   if (initiativeSlug) query = query.eq("initiative_slug", initiativeSlug);
   if (search) query = query.or(`title.ilike.%${search}%,excerpt.ilike.%${search}%`);
 

@@ -150,7 +150,7 @@ export default function AdminMilestonesTab() {
           <Card key={m.id} className="border border-gray-100">
             <CardContent className="p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="shrink-0 bg-gradient-to-br from-cordia-blue to-cordia-teal text-white text-sm font-bold px-3 py-2 rounded-tl-xl rounded-br-xl">
+                <div className="shrink-0 bg-cordia-blue text-white text-sm font-bold px-3 py-2 rounded-tl-xl rounded-br-xl">
                   {m.period_label}
                 </div>
                 <p className="text-sm text-gray-600 truncate">{m.description.split("\n")[0]}</p>

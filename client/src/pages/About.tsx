@@ -95,7 +95,7 @@ export default function About() {
                 )}
                 {/* Year box */}
                 <div className="shrink-0 w-[120px]">
-                  <div className="bg-gradient-to-br from-cordia-blue to-cordia-teal text-white font-bold text-lg text-center py-3 px-2 rounded-tl-2xl rounded-br-2xl shadow-md">
+                  <div className="bg-cordia-blue text-white font-bold text-lg text-center py-3 px-2 rounded-tl-2xl rounded-br-2xl shadow-md">
                     {milestone.period_label}
                   </div>
                 </div>

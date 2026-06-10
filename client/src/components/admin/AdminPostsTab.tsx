@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -31,21 +31,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Calendar } from "lucide-react";
+import { Plus, Pencil, Trash2, Calendar, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getPosts, createPost, updatePost, deletePost, uploadImage, deleteImage } from "@/lib/queries";
-import { getInitiatives } from "@/lib/queries";
-import type { Post, Initiative } from "@/lib/database.types";
+import { getPosts, createPost, updatePost, deletePost, uploadImage, deleteImage, getInitiatives } from "@/lib/queries";
+import type { Post } from "@/lib/database.types";
+
+type BoardFilter = "all" | "news" | "diaspora";
 
 export default function AdminPostsTab() {
   const { toast } = useToast();
-  const [board, setBoard] = useState<"news" | "diaspora">("news");
+  const [boardFilter, setBoardFilter] = useState<BoardFilter>("all");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Post | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const [form, setForm] = useState({
+  const defaultForm = {
+    board: "news" as "news" | "diaspora",
     title: "",
     excerpt: "",
     content: "",
@@ -53,11 +59,18 @@ export default function AdminPostsTab() {
     linkUrl: "",
     initiativeSlug: "",
     publishedDate: new Date().toISOString().split("T")[0],
-  });
+  };
+  const [form, setForm] = useState(defaultForm);
 
-  const { data: postsData } = useQuery({
-    queryKey: ["admin_posts", board],
-    queryFn: () => getPosts({ board, page: 1, limit: 100 }),
+  const { data: postsData, isLoading } = useQuery({
+    queryKey: ["admin_posts", boardFilter, page, limit, searchQuery],
+    queryFn: () =>
+      getPosts({
+        board: boardFilter === "all" ? undefined : boardFilter,
+        page,
+        limit,
+        search: searchQuery || undefined,
+      }),
   });
 
   const { data: initiatives = [] } = useQuery({
@@ -66,15 +79,18 @@ export default function AdminPostsTab() {
   });
 
   const posts = postsData?.posts || [];
+  const total = postsData?.total || 0;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+
+  const runSearch = () => {
+    setSearchQuery(searchInput.trim());
+    setPage(1);
+  };
 
   const openCreate = () => {
     setForm({
-      title: "",
-      excerpt: "",
-      content: "",
-      imageUrl: "",
-      linkUrl: "",
-      initiativeSlug: "",
+      ...defaultForm,
+      board: boardFilter === "diaspora" ? "diaspora" : "news",
       publishedDate: new Date().toISOString().split("T")[0],
     });
     setEditing(null);
@@ -84,6 +100,7 @@ export default function AdminPostsTab() {
   const openEdit = (post: Post) => {
     setEditing(post);
     setForm({
+      board: post.board,
       title: post.title,
       excerpt: post.excerpt,
       content: post.content,
@@ -127,13 +144,13 @@ export default function AdminPostsTab() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       const payload = {
-        board,
+        board: form.board,
         title: form.title,
         excerpt: form.excerpt,
         content: form.content,
         image_url: form.imageUrl || null,
         link_url: form.linkUrl || null,
-        initiative_slug: board === "news" && form.initiativeSlug ? form.initiativeSlug : null,
+        initiative_slug: form.board === "news" && form.initiativeSlug ? form.initiativeSlug : null,
         is_pinned_home: editing ? editing.is_pinned_home : false,
         published_date: new Date(form.publishedDate).toISOString(),
       };
@@ -182,66 +199,180 @@ export default function AdminPostsTab() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
         <h2 className="text-xl font-bold text-cordia-dark">
-          {board === "news" ? "뉴스" : "K-Diaspora"} <Badge variant="secondary">{posts.length}</Badge>
+          게시글 <Badge variant="secondary">{total}</Badge>
         </h2>
-        <div className="flex gap-3">
-          <Select value={board} onValueChange={(v: any) => setBoard(v)}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="news">뉴스</SelectItem>
-              <SelectItem value="diaspora">K-Diaspora</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button onClick={openCreate} className="bg-cordia-teal hover:bg-cordia-green text-white">
-            <Plus className="w-4 h-4 mr-2" />새 글
-          </Button>
-        </div>
+        <Button onClick={openCreate} className="bg-cordia-teal hover:bg-cordia-green text-white">
+          <Plus className="w-4 h-4 mr-2" />새 글
+        </Button>
       </div>
 
-      <div className="space-y-3">
-        {posts.map((post) => (
-          <Card key={post.id} className="border border-gray-100">
-            <CardContent className="p-4 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                {post.image_url && (
-                  <img src={post.image_url} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />
-                )}
-                <div className="min-w-0">
-                  <p className="font-semibold text-cordia-dark truncate">{post.title}</p>
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
-                    <Calendar className="w-3 h-3" />
-                    {new Date(post.published_date).toLocaleDateString()}
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <Select
+          value={boardFilter}
+          onValueChange={(v: BoardFilter) => {
+            setBoardFilter(v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger className="w-36">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">모두 보기</SelectItem>
+            <SelectItem value="news">뉴스</SelectItem>
+            <SelectItem value="diaspora">K-Diaspora</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={String(limit)}
+          onValueChange={(v) => {
+            setLimit(parseInt(v, 10));
+            setPage(1);
+          }}
+        >
+          <SelectTrigger className="w-32">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10개씩 보기</SelectItem>
+            <SelectItem value="20">20개씩 보기</SelectItem>
+            <SelectItem value="50">50개씩 보기</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="relative flex-1 min-w-[180px]">
+          <Input
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && runSearch()}
+            placeholder="제목·요약 검색..."
+            className="pl-9"
+          />
+          <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+        </div>
+        <Button variant="outline" onClick={runSearch}>
+          검색
+        </Button>
+        {searchQuery && (
+          <Button
+            variant="ghost"
+            className="text-gray-400"
+            onClick={() => {
+              setSearchInput("");
+              setSearchQuery("");
+              setPage(1);
+            }}
+          >
+            초기화
+          </Button>
+        )}
+      </div>
+
+      {/* List */}
+      {isLoading ? (
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />
+          ))}
+        </div>
+      ) : posts.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          {searchQuery ? "검색 결과가 없습니다." : "아직 게시글이 없습니다."}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {posts.map((post) => (
+            <Card key={post.id} className="border border-gray-100">
+              <CardContent className="p-4 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  {post.image_url && (
+                    <img src={post.image_url} alt="" className="w-12 h-12 object-cover rounded-lg shrink-0" />
+                  )}
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Badge
+                        variant="outline"
+                        className={`shrink-0 text-xs ${
+                          post.board === "news"
+                            ? "border-cordia-teal/40 text-cordia-teal"
+                            : "border-cordia-blue/40 text-cordia-blue"
+                        }`}
+                      >
+                        {post.board === "news" ? "뉴스" : "K-Diaspora"}
+                      </Badge>
+                      <p className="font-semibold text-cordia-dark truncate">{post.title}</p>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(post.published_date).toLocaleDateString()}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex gap-2 shrink-0">
-                <Button variant="outline" size="sm" onClick={() => openEdit(post)}>
-                  <Pencil className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-red-500 hover:text-red-600"
-                  onClick={() => setDeleteTarget(post.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                <div className="flex gap-2 shrink-0">
+                  <Button variant="outline" size="sm" onClick={() => openEdit(post)}>
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-500 hover:text-red-600"
+                    onClick={() => setDeleteTarget(post.id)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-3 mt-6">
+          <Button variant="outline" size="sm" onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1}>
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
+          <span className="text-sm text-gray-500">
+            {page} / {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(Math.min(totalPages, page + 1))}
+            disabled={page === totalPages}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Form Dialog */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? "게시글 수정" : "새 게시글 등록"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
+            <div>
+              <Label>게시판 *</Label>
+              <Select
+                value={form.board}
+                onValueChange={(v: "news" | "diaspora") => setForm({ ...form, board: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="news">뉴스</SelectItem>
+                  <SelectItem value="diaspora">K-Diaspora</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div>
               <Label>제목 *</Label>
               <Input
@@ -256,7 +387,7 @@ export default function AdminPostsTab() {
                 rows={2}
                 value={form.excerpt}
                 onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-                placeholder="간단한 요약"
+                placeholder="간단한 요약 (목록에 표시)"
               />
             </div>
             <div>
@@ -277,7 +408,7 @@ export default function AdminPostsTab() {
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, imageUrl: "" })}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 hover:bg-red-600"
                   >
                     ✕
                   </button>
@@ -305,7 +436,7 @@ export default function AdminPostsTab() {
               />
             </div>
 
-            {board === "news" && (
+            {form.board === "news" && (
               <div>
                 <Label>이니셔티브 카테고리</Label>
                 <Select
