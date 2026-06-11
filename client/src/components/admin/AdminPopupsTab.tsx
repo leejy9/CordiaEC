@@ -367,6 +367,7 @@ export default function AdminPopupsTab() {
           initialX={form.posX}
           initialY={form.posY}
           initialWidth={Math.min(800, Math.max(240, parseInt(form.width, 10) || 380))}
+          otherPopups={popups.filter((p) => p.id !== editing?.id && p.is_active)}
           onSave={(x, y, w) => {
             setForm((f) => ({ ...f, posX: x, posY: y, width: String(w) }));
             setEditorOpen(false);

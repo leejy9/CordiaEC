@@ -22,15 +22,10 @@ function PopupCard({ popup, onClose }: { popup: Popup; onClose: (id: string, hid
   const body = (
     <>
       {popup.image_url && (
-        <img src={popup.image_url} alt={popup.title} className="w-full h-auto" />
+        <img src={popup.image_url} alt={popup.title} className="w-full h-auto block" />
       )}
-      {(popup.title || popup.content) && (
-        <div className="p-4">
-          <h3 className="font-bold text-cordia-dark mb-1">{popup.title}</h3>
-          {popup.content && (
-            <p className="text-sm text-gray-600 whitespace-pre-wrap">{popup.content}</p>
-          )}
-        </div>
+      {popup.content.trim() && (
+        <p className="p-4 text-sm text-gray-600 whitespace-pre-wrap">{popup.content}</p>
       )}
     </>
   );
@@ -51,13 +46,20 @@ function PopupCard({ popup, onClose }: { popup: Popup; onClose: (id: string, hid
       data-testid={`popup-${popup.id}`}
     >
       <div className="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
-        <button
-          onClick={() => onClose(popup.id, hideToday)}
-          className="absolute top-2 right-2 z-10 bg-black/40 hover:bg-black/60 text-white rounded-full p-1.5 transition-colors"
-          aria-label="Close popup"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        {/* 제목 헤더 */}
+        <div className="flex items-center justify-between gap-3 pl-4 pr-2 py-2.5 border-b border-gray-100">
+          <h3 className="font-bold text-sm text-cordia-dark truncate">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cordia-teal mr-2 align-middle" />
+            {popup.title}
+          </h3>
+          <button
+            onClick={() => onClose(popup.id, hideToday)}
+            className="shrink-0 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full p-1.5 transition-colors"
+            aria-label="Close popup"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
         {popup.link_url ? (
           <a href={popup.link_url} target="_blank" rel="noopener noreferrer" className="block hover:opacity-95">
