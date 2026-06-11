@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, User, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import type { Post } from "@/lib/database.types";
+import { useLang, useT, pickField } from "@/lib/i18n";
 
 interface NewsModalProps {
   article: Post | null;
@@ -12,6 +13,8 @@ interface NewsModalProps {
 }
 
 export default function NewsModal({ article, open, onOpenChange }: NewsModalProps) {
+  const { lang } = useLang();
+  const t = useT();
 
   if (!article) return null;
 
@@ -43,7 +46,7 @@ export default function NewsModal({ article, open, onOpenChange }: NewsModalProp
                 </div>
               </div>
               <DialogTitle className="text-2xl font-bold text-left text-cordia-dark" data-testid="text-article-title">
-                {article.title}
+                {pickField(article, 'title', lang)}
               </DialogTitle>
               <div className="flex items-center text-gray-600">
                 <User className="w-4 h-4 mr-1" />
@@ -57,12 +60,12 @@ export default function NewsModal({ article, open, onOpenChange }: NewsModalProp
             <div className="prose max-w-none">
               <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-cordia-teal mb-6">
                 <p className="text-gray-700 italic" data-testid="text-article-excerpt">
-                  {article.excerpt}
+                  {pickField(article, 'excerpt', lang)}
                 </p>
               </div>
 
               <div className="text-gray-800 leading-relaxed" data-testid="text-article-content">
-                {article.content.split('\n').map((paragraph, index) => (
+                {pickField(article, 'content', lang).split('\n').map((paragraph, index) => (
                   <p key={index} className="mb-4">{paragraph}</p>
                 ))}
               </div>
@@ -89,7 +92,7 @@ export default function NewsModal({ article, open, onOpenChange }: NewsModalProp
                   className="inline-flex items-center gap-2 bg-cordia-teal text-white px-6 py-3 rounded-lg hover:bg-cordia-green transition-colors font-medium"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  View Full Article
+                  {t('common.viewOriginal')}
                 </a>
               </div>
             )}

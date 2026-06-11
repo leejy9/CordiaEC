@@ -37,6 +37,7 @@ export default function AdminMilestonesTab() {
   const [form, setForm] = useState({
     periodLabel: "",
     description: "",
+    descriptionKo: "",
   });
 
   const { data: milestones = [] } = useQuery({
@@ -45,7 +46,7 @@ export default function AdminMilestonesTab() {
   });
 
   const openCreate = () => {
-    setForm({ periodLabel: "", description: "" });
+    setForm({ periodLabel: "", description: "", descriptionKo: "" });
     setEditing(null);
     setFormOpen(true);
   };
@@ -55,6 +56,7 @@ export default function AdminMilestonesTab() {
     setForm({
       periodLabel: m.period_label,
       description: m.description,
+      descriptionKo: m.description_ko || "",
     });
     setFormOpen(true);
   };
@@ -66,12 +68,14 @@ export default function AdminMilestonesTab() {
           period_label: form.periodLabel,
           title: form.periodLabel,
           description: form.description,
+          description_ko: form.descriptionKo || null,
         });
       } else {
         await createMilestone({
           period_label: form.periodLabel,
           title: form.periodLabel,
           description: form.description,
+          description_ko: form.descriptionKo || null,
           image_url: null,
           display_order: milestones.length + 1,
         });

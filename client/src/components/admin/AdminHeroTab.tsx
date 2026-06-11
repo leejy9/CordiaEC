@@ -46,7 +46,7 @@ export default function AdminHeroTab() {
   const [uploading, setUploading] = useState(false);
   const [interval, setIntervalValue] = useState("5");
 
-  const [form, setForm] = useState({ imageUrl: "", headline: "", subLines: "" });
+  const [form, setForm] = useState({ imageUrl: "", headline: "", subLines: "", headlineKo: "", subLinesKo: "" });
 
   const { data: slides = [] } = useQuery({
     queryKey: ["admin_hero_slides"],
@@ -63,14 +63,14 @@ export default function AdminHeroTab() {
   }, [settings]);
 
   const openCreate = () => {
-    setForm({ imageUrl: "", headline: "", subLines: "" });
+    setForm({ imageUrl: "", headline: "", subLines: "", headlineKo: "", subLinesKo: "" });
     setEditing(null);
     setFormOpen(true);
   };
 
   const openEdit = (s: HeroSlide) => {
     setEditing(s);
-    setForm({ imageUrl: s.image_url, headline: s.headline, subLines: s.sub_lines });
+    setForm({ imageUrl: s.image_url, headline: s.headline, subLines: s.sub_lines, headlineKo: s.headline_ko || "", subLinesKo: s.sub_lines_ko || "" });
     setFormOpen(true);
   };
 
@@ -100,12 +100,16 @@ export default function AdminHeroTab() {
           image_url: form.imageUrl,
           headline: form.headline,
           sub_lines: form.subLines,
+          headline_ko: form.headlineKo || null,
+          sub_lines_ko: form.subLinesKo || null,
         });
       } else {
         await createHeroSlide({
           image_url: form.imageUrl,
           headline: form.headline,
           sub_lines: form.subLines,
+          headline_ko: form.headlineKo || null,
+          sub_lines_ko: form.subLinesKo || null,
           display_order: slides.length + 1,
           is_active: true,
         });

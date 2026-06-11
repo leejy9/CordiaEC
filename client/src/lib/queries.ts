@@ -301,6 +301,29 @@ export async function deletePopup(id: string): Promise<void> {
 }
 
 // ============================================================
+// DeepL 번역 (관리자 전용 — 서버리스 프록시 경유)
+// ============================================================
+export async function translateTexts(texts: string[]): Promise<string[]> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("로그인이 필요합니다.");
+
+  const res = await fetch("/api/translate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ texts }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `번역 실패 (${res.status})`);
+  }
+  const data = await res.json();
+  return data.translations;
+}
+
+// ============================================================
 // 이미지 업로드 (Storage + WebP 압축)
 // ============================================================
 export async function uploadImage(file: File): Promise<string> {

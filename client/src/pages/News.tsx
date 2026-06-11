@@ -14,6 +14,7 @@ import {
 import { Calendar, ImageIcon, ExternalLink, ChevronRight, Search } from "lucide-react";
 import { getPosts } from "@/lib/queries";
 import type { Post } from "@/lib/database.types";
+import { useLang, useT, pickField } from "@/lib/i18n";
 
 function buildPageList(current: number, total: number): (number | "...")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
@@ -28,6 +29,8 @@ function buildPageList(current: number, total: number): (number | "...")[] {
 }
 
 export default function News() {
+  const { lang } = useLang();
+  const t = useT();
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [searchInput, setSearchInput] = useState("");
@@ -55,8 +58,8 @@ export default function News() {
       {/* Hero Section */}
       <section className="relative py-20 bg-cordia-dark text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">News & Updates</h1>
-          <p className="text-lg text-white/80">Latest developments and insights from CordiaEC</p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{t('news.heroTitle')}</h1>
+          <p className="text-lg text-white/80">{t('news.heroDesc')}</p>
         </div>
       </section>
 
@@ -67,7 +70,7 @@ export default function News() {
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="flex-1 relative">
               <Input
-                placeholder="Search news..."
+                placeholder={t('news.searchPlaceholder')}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -87,7 +90,7 @@ export default function News() {
               }}
               className="bg-cordia-teal hover:bg-cordia-green text-white"
             >
-              Search
+              {t('common.search')}
             </Button>
           </div>
 
@@ -100,7 +103,7 @@ export default function News() {
             </div>
           ) : articles.length === 0 ? (
             <div className="text-center py-16 text-gray-400">
-              <p>No news articles found</p>
+              <p>{t('news.empty')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -121,10 +124,10 @@ export default function News() {
                   <div className="flex-1 flex flex-col justify-between min-w-0">
                     <div>
                       <h3 className="font-semibold text-cordia-dark group-hover:text-cordia-teal transition-colors line-clamp-2">
-                        {article.title}
+                        {pickField(article, 'title', lang)}
                       </h3>
                       <p className="text-gray-600 text-sm line-clamp-2 mt-2">
-                        {article.excerpt}
+                        {pickField(article, 'excerpt', lang)}
                       </p>
                     </div>
                     <div className="flex items-center justify-between text-xs text-gray-400 mt-3">
@@ -154,7 +157,7 @@ export default function News() {
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
               >
-                Previous
+                {t('common.previous')}
               </Button>
               {pageList.map((page, idx) =>
                 page === "..." ? (
@@ -181,7 +184,7 @@ export default function News() {
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
               >
-                Next
+                {t('common.next')}
               </Button>
             </div>
           )}

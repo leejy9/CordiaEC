@@ -7,8 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, ChevronRight, ImageIcon } from "lucide-react";
 import { getInitiative, getPosts } from "@/lib/queries";
 import type { Post } from "@/lib/database.types";
+import { useLang, useT, pickField } from "@/lib/i18n";
 
 export default function InitiativeDetail() {
+  const { lang } = useLang();
+  const t = useT();
   const { slug } = useParams<{ slug: string }>();
   const [, navigate] = useLocation();
 
@@ -55,7 +58,7 @@ export default function InitiativeDetail() {
         <div className="py-32 text-center">
           <p className="text-2xl text-gray-400 mb-6">이니셔티브를 찾을 수 없습니다.</p>
           <Button onClick={() => navigate("/initiatives")} className="bg-cordia-teal text-white">
-            <ArrowLeft className="w-4 h-4 mr-2" />이니셔티브 목록
+            <ArrowLeft className="w-4 h-4 mr-2" />{t('initiatives.backToList')}
           </Button>
         </div>
       </Layout>
@@ -72,7 +75,7 @@ export default function InitiativeDetail() {
             onClick={() => navigate("/initiatives")}
             data-testid="button-back-initiatives"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />이니셔티브 목록
+            <ArrowLeft className="w-4 h-4 mr-2" />{t('initiatives.backToList')}
           </Button>
 
           {initiative && (
@@ -88,15 +91,15 @@ export default function InitiativeDetail() {
               </Badge>
 
               <h1 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-6 leading-tight">
-                {initiative.title}
+                {pickField(initiative, 'title', lang)}
               </h1>
 
               <p className="text-lg text-gray-500 border-l-4 border-cordia-teal pl-4 mb-8 italic">
-                {initiative.description}
+                {pickField(initiative, 'description', lang)}
               </p>
 
               <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed mb-12">
-                {initiative.content.split("\n").map((p, i) =>
+                {pickField(initiative, 'content', lang).split("\n").map((p, i) =>
                   p.trim() ? <p key={i} className="mb-4">{p.trim()}</p> : null
                 )}
               </div>
@@ -105,7 +108,7 @@ export default function InitiativeDetail() {
 
           {/* Related News */}
           <div className="border-t pt-10">
-            <h2 className="text-2xl font-bold text-cordia-dark mb-6">관련 소식</h2>
+            <h2 className="text-2xl font-bold text-cordia-dark mb-6">{t('initiatives.related')}</h2>
 
             {newsLoading ? (
               <div className="space-y-3">
@@ -115,7 +118,7 @@ export default function InitiativeDetail() {
               </div>
             ) : articles.length === 0 ? (
               <div className="text-center py-12 bg-gray-50 rounded-xl">
-                <p className="text-gray-400">아직 등록된 소식이 없습니다.</p>
+                <p className="text-gray-400">{t('initiatives.relatedEmpty')}</p>
                 <p className="text-xs text-gray-400 mt-2">관리자에서 뉴스를 작성할 때 이 카테고리를 선택하면 여기에 표시됩니다.</p>
               </div>
             ) : (
@@ -136,9 +139,9 @@ export default function InitiativeDetail() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-cordia-dark group-hover:text-cordia-teal transition-colors line-clamp-1">
-                        {article.title}
+                        {pickField(article, 'title', lang)}
                       </h3>
-                      <p className="text-gray-500 text-sm line-clamp-2 mt-1">{article.excerpt}</p>
+                      <p className="text-gray-500 text-sm line-clamp-2 mt-1">{pickField(article, 'excerpt', lang)}</p>
                     </div>
                     <div className="shrink-0 flex flex-col items-end gap-2 text-xs text-gray-400 min-w-[100px]">
                       <span className="flex items-center gap-1">
@@ -159,7 +162,7 @@ export default function InitiativeDetail() {
               onClick={() => navigate("/contact")}
               data-testid="button-apply-now"
             >
-              Apply Now
+              {t('initiatives.applyNow')}
             </Button>
           </div>
         </div>

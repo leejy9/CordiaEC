@@ -9,10 +9,13 @@ import HeroCarousel from "@/components/HeroCarousel";
 import PopupDisplay from "@/components/PopupDisplay";
 import { getInitiatives, getHomePosts, getSiteSettings } from "@/lib/queries";
 import type { Post, Initiative } from "@/lib/database.types";
+import { useLang, useT, pickField } from "@/lib/i18n";
 
 export type NewsArticle = Post;
 
 export default function Home() {
+  const { lang } = useLang();
+  const t = useT();
   const [selectedNews, setSelectedNews] = useState<Post | null>(null);
   const [newsModalOpen, setNewsModalOpen] = useState(false);
 
@@ -71,10 +74,10 @@ export default function Home() {
             </div>
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-6" data-testid="text-about-title">
-                About CordiaEC
+                {t('home.aboutTitle')}
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed" data-testid="text-about-description">
-                Cordia is a global hub rooted in Korean Studies, connecting knowledge and people across borders. We create trusted networks and opportunities that deepen understanding of Korea worldwide.
+                {t('home.aboutDesc')}
               </p>
               <div className="space-y-4 mb-8">
                 <div className="flex items-start">
@@ -82,8 +85,8 @@ export default function Home() {
                     <Lightbulb className="text-yellow-600 text-xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-cordia-dark">Insightful Knowledge</h3>
-                    <p className="text-gray-600">Sharing trusted perspectives on Korea</p>
+                    <h3 className="font-semibold text-cordia-dark">{t('home.feature1Title')}</h3>
+                    <p className="text-gray-600">{t('home.feature1Desc')}</p>
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -91,8 +94,8 @@ export default function Home() {
                     <Users className="text-indigo-600 text-xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-cordia-dark">Trusted Networks</h3>
-                    <p className="text-gray-600">Connecting experts, communities, and institutions</p>
+                    <h3 className="font-semibold text-cordia-dark">{t('home.feature2Title')}</h3>
+                    <p className="text-gray-600">{t('home.feature2Desc')}</p>
                   </div>
                 </div>
                     <div className="flex items-start">
@@ -100,14 +103,14 @@ export default function Home() {
                         <Handshake className="text-green-600 text-xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-cordia-dark">Collaborative Opportunities</h3>
-                    <p className="text-gray-600">Creating spaces for global partnerships</p>
+                    <h3 className="font-semibold text-cordia-dark">{t('home.feature3Title')}</h3>
+                    <p className="text-gray-600">{t('home.feature3Desc')}</p>
                   </div>
                 </div>
               </div>
               <Link href="/about">
                 <Button className="bg-cordia-blue text-white hover:bg-blue-600" data-testid="button-learn-more-about">
-                  Learn More About Us
+                  {t('home.learnMoreAbout')}
                 </Button>
               </Link>
             </div>
@@ -120,7 +123,7 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-8" data-testid="text-initiatives-title">
-              Our Initiatives
+              {t('home.initiativesTitle')}
             </h2>
 
             {/* Comprehensive Initiatives Image */}
@@ -137,7 +140,7 @@ export default function Home() {
             </div>
 
             <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
-              Cordia drives collaboration across Korean business, culture, and education. From K-Food and K-Beauty to startups and venture capital, we create trusted bridges that connect global partners and unlock new opportunities. By fostering cross-border internships and global forums, we ensure knowledge and innovation flow seamlessly across communities.
+              {t('home.initiativesDesc')}
             </p>
           </div>
 
@@ -169,7 +172,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link href="/initiatives">
               <Button className="bg-cordia-blue text-white hover:bg-blue-600 px-8 py-3 text-lg font-medium" data-testid="button-view-all-initiatives">
-                View All Initiatives
+                {t('common.viewAllInitiatives')}
               </Button>
             </Link>
           </div>
@@ -184,14 +187,14 @@ export default function Home() {
               {settings.home_board_title || "Latest News"}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Stay updated with the latest developments, announcements, and insights from CordiaEC.
+              {t('home.newsDesc')}
             </p>
           </div>
 
           <div className="max-w-4xl mx-auto">
             {newsArticles.length === 0 ? (
               <div className="text-center py-12 bg-gray-50 rounded-2xl text-gray-400">
-                No news yet.
+                {t('home.noNews')}
               </div>
             ) : (
               <div className="space-y-4">
@@ -211,10 +214,10 @@ export default function Home() {
                     </div>
                     <div className="flex-1 min-w-0 py-1">
                       <h3 className="font-semibold text-cordia-dark group-hover:text-cordia-teal transition-colors line-clamp-1" data-testid={`text-news-title-${article.id}`}>
-                        {article.title}
+                        {pickField(article, 'title', lang)}
                       </h3>
                       <p className="text-sm text-gray-600 line-clamp-2 mt-2" data-testid={`text-news-desc-${article.id}`}>
-                        {article.excerpt}
+                        {pickField(article, 'excerpt', lang)}
                       </p>
                     </div>
                     <div className="shrink-0 self-center text-sm text-gray-400 whitespace-nowrap" data-testid={`text-news-date-${article.id}`}>
@@ -228,7 +231,7 @@ export default function Home() {
             <div className="text-center mt-8">
               <Link href="/news">
                 <Button className="bg-cordia-blue text-white hover:bg-blue-600" data-testid="button-view-all-news">
-                  View All News
+                  {t('common.viewAllNews')}
                 </Button>
               </Link>
             </div>
@@ -244,18 +247,17 @@ export default function Home() {
             {/* Text Content */}
             <div className="text-center lg:text-left order-2 lg:order-1">
               <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6" data-testid="text-cta-title">
-                Ready to Get Started?
+                {t('home.ctaTitle')}
               </h2>
               <p className="text-lg text-black/90 mb-8" data-testid="text-cta-description">
-                Connect with our team to explore partnership opportunities and learn how CordiaEC can help drive your 
-                organization's global progress through strategic collaboration.
+                {t('home.ctaDesc')}
               </p>
               <Link href="/contact">
                 <Button 
                   className="bg-white text-cordia-teal hover:bg-gray-50 px-8 py-4 text-lg font-medium shadow-lg hover:scale-105 transition-all duration-300"
                   data-testid="button-contact-cta"
                 >
-                  Contact Us
+                  {t('home.ctaButton')}
                 </Button>
               </Link>
             </div>

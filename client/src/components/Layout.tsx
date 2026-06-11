@@ -1,7 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
+import { useLang, useT } from "@/lib/i18n";
 import logoIcon from "@assets/Icon_png_2-removebg-preview_1754497111079.png";
 import logoText from "@assets/headline_1754497111077.png";
 
@@ -12,15 +13,38 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { lang, setLang } = useLang();
+  const t = useT();
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Initiatives', href: '/initiatives' },
-    { name: 'News', href: '/news' },
-    { name: 'K-Diaspora', href: '/overseas-korean' },
-    { name: 'Contact', href: '/contact' },
+    { name: t('nav.home'), href: '/' },
+    { name: t('nav.about'), href: '/about' },
+    { name: t('nav.initiatives'), href: '/initiatives' },
+    { name: t('nav.news'), href: '/news' },
+    { name: t('nav.diaspora'), href: '/overseas-korean' },
+    { name: t('nav.contact'), href: '/contact' },
   ];
+
+  const LangToggle = (
+    <div className="flex items-center gap-1.5 text-sm">
+      <Globe className="w-4 h-4 text-gray-400" />
+      <button
+        onClick={() => setLang("ko")}
+        className={`font-medium transition-colors ${lang === "ko" ? "text-cordia-teal font-bold" : "text-gray-400 hover:text-gray-600"}`}
+        data-testid="lang-ko"
+      >
+        KOR
+      </button>
+      <span className="text-gray-300">|</span>
+      <button
+        onClick={() => setLang("en")}
+        className={`font-medium transition-colors ${lang === "en" ? "text-cordia-teal font-bold" : "text-gray-400 hover:text-gray-600"}`}
+        data-testid="lang-en"
+      >
+        ENG
+      </button>
+    </div>
+  );
 
   const isActive = (href: string) => {
     if (href === '/') return location === '/';
@@ -52,16 +76,17 @@ export default function Layout({ children }: LayoutProps) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               {navigation.map((item) => (
-                <Link key={item.name} href={item.href}>
+                <Link key={item.href} href={item.href}>
                   <span className={`font-medium transition-colors duration-200 cursor-pointer ${
-                    isActive(item.href) 
-                      ? 'text-cordia-dark' 
+                    isActive(item.href)
+                      ? 'text-cordia-dark'
                       : 'text-gray-600 hover:text-cordia-teal'
-                  }`} data-testid={`nav-${item.name.toLowerCase()}`}>
+                  }`} data-testid={`nav-${item.href}`}>
                     {item.name}
                   </span>
                 </Link>
               ))}
+              {LangToggle}
             </div>
             
             {/* Mobile menu button */}
@@ -83,20 +108,21 @@ export default function Layout({ children }: LayoutProps) {
           <div className="md:hidden bg-white border-t border-gray-100">
             <div className="px-4 py-4 space-y-4">
               {navigation.map((item) => (
-                <Link key={item.name} href={item.href}>
-                  <span 
+                <Link key={item.href} href={item.href}>
+                  <span
                     className={`block font-medium cursor-pointer ${
-                      isActive(item.href) 
-                        ? 'text-cordia-dark' 
+                      isActive(item.href)
+                        ? 'text-cordia-dark'
                         : 'text-gray-600 hover:text-cordia-teal'
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
-                    data-testid={`mobile-nav-${item.name.toLowerCase()}`}
+                    data-testid={`mobile-nav-${item.href}`}
                   >
                     {item.name}
                   </span>
                 </Link>
               ))}
+              <div className="pt-2 border-t border-gray-100">{LangToggle}</div>
             </div>
           </div>
         )}
@@ -126,16 +152,16 @@ export default function Layout({ children }: LayoutProps) {
                 />
               </div>
               <p className="text-gray-400 mb-4">
-                Driving global progress through innovative solutions and strategic partnerships.
+                {t('footer.tagline')}
               </p>
             </div>
             
             {/* Quick Links */}
             <div>
-              <h3 className="font-semibold mb-4">Quick Links</h3>
+              <h3 className="font-semibold mb-4">{t('footer.quickLinks')}</h3>
               <ul className="space-y-2">
                 {navigation.slice(1).map((item) => (
-                  <li key={item.name}>
+                  <li key={item.href}>
                     <Link href={item.href}>
                       <span className="text-gray-400 hover:text-cordia-teal transition-colors cursor-pointer">
                         {item.name}
@@ -148,7 +174,7 @@ export default function Layout({ children }: LayoutProps) {
             
             {/* Contact Info */}
             <div>
-              <h3 className="font-semibold mb-4">Contact Info</h3>
+              <h3 className="font-semibold mb-4">{t('footer.contactInfo')}</h3>
               <ul className="space-y-2 text-gray-400">
                 <li>k-academy@inha.ac.kr</li>
                 <li>Incheon, South Korea</li>

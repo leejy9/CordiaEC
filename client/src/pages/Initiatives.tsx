@@ -6,9 +6,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { getInitiatives } from "@/lib/queries";
 import type { Initiative } from "@/lib/database.types";
+import { useLang, useT, pickField } from "@/lib/i18n";
 
 export default function Initiatives() {
   const [, navigate] = useLocation();
+  const { lang } = useLang();
+  const t = useT();
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -23,11 +26,10 @@ export default function Initiatives() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h1 className="text-4xl sm:text-5xl font-bold text-cordia-dark mb-6">
-              Our Initiatives
+              {t('initiatives.title')}
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Discover our comprehensive programs designed to foster innovation, collaboration, and sustainable growth
-              across diverse industries and markets.
+              {t('initiatives.desc')}
             </p>
           </div>
 
@@ -48,14 +50,14 @@ export default function Initiatives() {
                     />
                   </div>
                   <h3 className="text-xl font-bold text-cordia-dark mb-3 group-hover:text-cordia-teal transition-colors">
-                    {init.title}
+                    {pickField(init, 'title', lang)}
                   </h3>
                   <p className="text-gray-600 mb-4 line-clamp-2">
-                    {init.description}
+                    {pickField(init, 'description', lang)}
                   </p>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-cordia-teal font-medium">
-                      Learn More
+                      {t('common.learnMore')}
                     </span>
                     <ArrowRight className="w-4 h-4 text-cordia-teal group-hover:translate-x-1 transition-transform" />
                   </div>

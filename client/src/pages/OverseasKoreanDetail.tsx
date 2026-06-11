@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, ExternalLink } from "lucide-react";
 import { getPost } from "@/lib/queries";
 import type { Post } from "@/lib/database.types";
+import { useLang, useT, pickField } from "@/lib/i18n";
 
 export default function OverseasKoreanDetail() {
+  const { lang } = useLang();
+  const t = useT();
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
 
@@ -38,9 +41,9 @@ export default function OverseasKoreanDetail() {
     return (
       <Layout>
         <div className="py-32 text-center">
-          <p className="text-2xl text-gray-400 mb-6">게시글을 찾을 수 없습니다.</p>
+          <p className="text-2xl text-gray-400 mb-6">{t('common.notFound')}</p>
           <Button onClick={() => navigate("/overseas-korean")} className="bg-cordia-teal text-white">
-            <ArrowLeft className="w-4 h-4 mr-2" />목록으로
+            <ArrowLeft className="w-4 h-4 mr-2" />{t('common.backToList')}
           </Button>
         </div>
       </Layout>
@@ -56,7 +59,7 @@ export default function OverseasKoreanDetail() {
             className="mb-8 text-gray-500 hover:text-cordia-teal -ml-2"
             onClick={() => navigate("/overseas-korean")}
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />K-Diaspora 목록
+            <ArrowLeft className="w-4 h-4 mr-2" />{t('diaspora.backToList')}
           </Button>
 
           {post.image_url && (
@@ -73,15 +76,15 @@ export default function OverseasKoreanDetail() {
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-6 leading-tight">
-            {post.title}
+            {pickField(post, 'title', lang)}
           </h1>
 
           <p className="text-lg text-gray-500 border-l-4 border-cordia-teal pl-4 mb-8 italic">
-            {post.excerpt}
+            {pickField(post, 'excerpt', lang)}
           </p>
 
           <div className="prose prose-gray max-w-none text-gray-700 leading-relaxed">
-            {post.content.split("\n").map((p, i) =>
+            {pickField(post, 'content', lang).split("\n").map((p, i) =>
               p.trim() ? <p key={i} className="mb-4">{p.trim()}</p> : null
             )}
           </div>
@@ -95,7 +98,7 @@ export default function OverseasKoreanDetail() {
                 className="inline-flex items-center gap-2 bg-cordia-teal text-white px-6 py-3 rounded-xl hover:bg-cordia-green transition-colors font-medium"
               >
                 <ExternalLink className="w-4 h-4" />
-                원문 보기
+                {t('common.viewOriginal')}
               </a>
             </div>
           )}

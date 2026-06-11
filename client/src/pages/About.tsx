@@ -2,8 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import { getMilestones } from "@/lib/queries";
 import type { Milestone } from "@/lib/database.types";
+import { useLang, useT, pickField } from "@/lib/i18n";
 
 export default function About() {
+  const { lang } = useLang();
+  const t = useT();
   const { data: milestones = [] } = useQuery({
     queryKey: ["milestones"],
     queryFn: getMilestones,
@@ -16,11 +19,10 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl font-bold mb-6" data-testid="text-about-hero-title">
-              About CordiaEC
+              {t('about.heroTitle')}
             </h1>
             <p className="text-lg sm:text-xl text-white/90 leading-relaxed" data-testid="text-about-hero-description">
-              Cordia is a global hub rooted in Korean Studies, connecting knowledge and people across borders.
-              We work with scholars and experts who hold deep cultural insight, helping businesses expand into Korea and supporting global outreach with trusted networks.
+              {t('about.heroDesc')}
             </p>
           </div>
         </div>
@@ -31,7 +33,7 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-4" data-testid="text-vision-mission-title">
-              Our Vision & Mission
+              {t('about.vmTitle')}
             </h2>
           </div>
           
@@ -44,10 +46,9 @@ export default function About() {
                 data-testid="img-vision"
               />
               <div className="mt-8">
-                <h3 className="text-xl font-bold text-cordia-dark mb-4">Our Vision</h3>
+                <h3 className="text-xl font-bold text-cordia-dark mb-4">{t('about.visionTitle')}</h3>
                 <p className="text-gray-600 leading-relaxed" data-testid="text-vision-description">
-                  To become the trusted bridge where Korean expertise meets global opportunities.
-                  We envision a world where cultural understanding fosters sustainable growth, collaboration, and shared progress.
+                  {t('about.visionDesc')}
                 </p>
                 <p className="text-gray-600 leading-relaxed mt-4">
                   
@@ -63,10 +64,9 @@ export default function About() {
                 data-testid="img-mission"
               />
               <div className="mt-8">
-                <h3 className="text-xl font-bold text-cordia-dark mb-4">Our Mission</h3>
+                <h3 className="text-xl font-bold text-cordia-dark mb-4">{t('about.missionTitle')}</h3>
                 <p className="text-gray-600 leading-relaxed" data-testid="text-mission-description">
-                  To empower global partners with Korea-focused knowledge and networks.
-                  We are dedicated to creating spaces for dialogue, supporting business expansion, and building partnerships that connect communities worldwide.
+                  {t('about.missionDesc')}
                 </p>
                 <p className="text-gray-600 leading-relaxed mt-4">
                   
@@ -82,7 +82,7 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-cordia-dark mb-4" data-testid="text-org-history-title">
-              Our Organization & History
+              {t('about.historyTitle')}
             </h2>
           </div>
           
@@ -101,7 +101,7 @@ export default function About() {
                 </div>
                 {/* Content lines */}
                 <div className="flex-1 pt-2 space-y-4">
-                  {milestone.description.split("\n").map((line, i) =>
+                  {pickField(milestone, "description", lang).split("\n").map((line, i) =>
                     line.trim() ? (
                       <p key={i} className="text-gray-700 leading-relaxed">{line.trim()}</p>
                     ) : null
@@ -114,7 +114,7 @@ export default function About() {
           <div className="text-center">
             <a href="/initiatives" className="inline-block">
               <button className="bg-cordia-blue text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors font-medium" data-testid="button-go-to-initiatives">
-                Go To Initiatives
+                {t('about.goToInitiatives')}
               </button>
             </a>
           </div>

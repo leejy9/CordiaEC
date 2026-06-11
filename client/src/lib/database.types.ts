@@ -1,6 +1,9 @@
 export interface Initiative {
   slug: string;
   title: string;
+  title_ko: string | null;
+  description_ko: string | null;
+  content_ko: string | null;
   label: string;
   category: string;
   description: string;
@@ -15,6 +18,9 @@ export interface Post {
   title: string;
   excerpt: string;
   content: string;
+  title_ko: string | null;
+  excerpt_ko: string | null;
+  content_ko: string | null;
   image_url: string | null;
   link_url: string | null;
   initiative_slug: string | null;
@@ -28,6 +34,7 @@ export interface Milestone {
   period_label: string;
   title: string;
   description: string;
+  description_ko: string | null;
   image_url: string | null;
   display_order: number;
 }
@@ -50,6 +57,8 @@ export interface HeroSlide {
   image_url: string;
   headline: string;
   sub_lines: string;
+  headline_ko: string | null;
+  sub_lines_ko: string | null;
   display_order: number;
   is_active: boolean;
 }

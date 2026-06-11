@@ -3,8 +3,10 @@ import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone, MapPin } from "lucide-react";
 import ContactModal from "@/components/modals/ContactModal";
+import { useT } from "@/lib/i18n";
 
 export default function Contact() {
+  const t = useT();
   const [contactModalOpen, setContactModalOpen] = useState(false);
 
   return (
@@ -14,11 +16,10 @@ export default function Contact() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h1 className="text-4xl sm:text-5xl font-bold text-cordia-dark mb-6" data-testid="text-contact-title">
-              Contact Us
+              {t('contact.title')}
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto" data-testid="text-contact-description">
-              We're here to help. Reach out to us with any questions or inquiries about our programs, partnerships, 
-              or services.
+              {t('contact.desc')}
             </p>
           </div>
           

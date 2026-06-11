@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { getActiveHeroSlides, getSiteSettings } from "@/lib/queries";
+import { useLang, pickField } from "@/lib/i18n";
 
 export default function HeroCarousel() {
+  const { lang } = useLang();
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -91,10 +93,10 @@ export default function HeroCarousel() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight whitespace-pre-line"
             data-testid="text-hero-title"
           >
-            {slide.headline}
+            {pickField(slide, "headline", lang)}
           </h1>
           <div className="space-y-2">
-            {slide.sub_lines.split("\n").map((line, i) =>
+            {pickField(slide, "sub_lines", lang).split("\n").map((line, i) =>
               line.trim() ? (
                 <p key={i} className="text-base sm:text-lg text-white/90 leading-relaxed">
                   {line.trim()}
