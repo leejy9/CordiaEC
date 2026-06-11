@@ -1,6 +1,6 @@
 # CordiaEC 작업 현황
 
-> 2026-06-11: TODO 4건 전부 구현 완료.
+> 2026-06-11: TODO 4건 + 이중언어(KOR/ENG + DeepL 자동번역) 구현 완료.
 
 ## ✅ 완료된 작업
 
@@ -20,6 +20,12 @@ GitHub 저장소 → Settings → Secrets and variables → Actions → New repo
 | `SUPABASE_SERVICE_ROLE_KEY` | (선택) Supabase 대시보드 → Settings → API → service_role. 등록해야 contacts(문의 개인정보)까지 백업됨 |
 
 등록 후 GitHub → Actions 탭 → "Weekly Supabase Backup" → Run workflow로 수동 테스트 1회 권장.
+
+## ⚠️ 이중언어 활성화에 필요한 1회성 설정 (사용자 작업)
+
+1. [DeepL API Free](https://www.deepl.com/pro-api) 가입 (무료, 월 50만 자) → API 키 발급
+2. Vercel → Settings → Environment Variables → `DEEPL_API_KEY` 추가 → Redeploy
+3. 키 등록 전에도 사이트·KOR/ENG 토글은 정상 작동 (자동 번역 버튼만 비활성 에러)
 
 ## 남은 아이디어 (미착수)
 

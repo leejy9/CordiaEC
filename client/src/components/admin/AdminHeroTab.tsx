@@ -35,7 +35,9 @@ import {
   deleteImage,
   getSiteSettings,
   updateSiteSetting,
+  translateTexts,
 } from "@/lib/queries";
+import { Languages } from "lucide-react";
 import type { HeroSlide } from "@/lib/database.types";
 
 export default function AdminHeroTab() {
@@ -45,6 +47,28 @@ export default function AdminHeroTab() {
   const [deleteTarget, setDeleteTarget] = useState<HeroSlide | null>(null);
   const [uploading, setUploading] = useState(false);
   const [interval, setIntervalValue] = useState("5");
+  const [translating, setTranslating] = useState(false);
+
+  const handleTranslate = async () => {
+    if (!form.headlineKo.trim() && !form.subLinesKo.trim()) {
+      toast({ title: "번역할 국문 내용이 없습니다.", variant: "destructive" });
+      return;
+    }
+    setTranslating(true);
+    try {
+      const [headline, subLines] = await translateTexts([form.headlineKo || " ", form.subLinesKo || " "]);
+      setForm((f) => ({
+        ...f,
+        headline: f.headlineKo.trim() ? headline.trim() : f.headline,
+        subLines: f.subLinesKo.trim() ? subLines.trim() : f.subLines,
+      }));
+      toast({ title: "번역 완료", description: "영문 칸을 확인하세요." });
+    } catch (err: any) {
+      toast({ title: "번역 실패", description: err.message, variant: "destructive" });
+    } finally {
+      setTranslating(false);
+    }
+  };
 
   const [form, setForm] = useState({ imageUrl: "", headline: "", subLines: "", headlineKo: "", subLinesKo: "" });
 
@@ -279,24 +303,62 @@ export default function AdminHeroTab() {
                 </label>
               )}
             </div>
-            <div>
-              <Label>큰 제목 *</Label>
-              <Textarea
-                rows={2}
-                value={form.headline}
-                onChange={(e) => setForm({ ...form, headline: e.target.value })}
-                placeholder={"예: 정체성의 정치와 공공외교의\n한국학을 특화하는 CordiaEC입니다."}
-              />
-              <p className="text-xs text-gray-400 mt-1">줄바꿈하면 화면에서도 줄이 나뉩니다.</p>
+            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
+              <p className="text-sm font-semibold text-cordia-dark">🇰🇷 국문</p>
+              <div>
+                <Label>큰 제목 (국문)</Label>
+                <Textarea
+                  rows={2}
+                  value={form.headlineKo}
+                  onChange={(e) => setForm({ ...form, headlineKo: e.target.value })}
+                  placeholder={"예: 한국학을 특화하는 CordiaEC입니다."}
+                />
+              </div>
+              <div>
+                <Label>부가 텍스트 (국문)</Label>
+                <Textarea
+                  rows={3}
+                  value={form.subLinesKo}
+                  onChange={(e) => setForm({ ...form, subLinesKo: e.target.value })}
+                  placeholder={"한 줄에 하나씩"}
+                />
+              </div>
             </div>
-            <div>
-              <Label>부가 텍스트</Label>
-              <Textarea
-                rows={4}
-                value={form.subLines}
-                onChange={(e) => setForm({ ...form, subLines: e.target.value })}
-                placeholder={"한 줄에 하나씩.\n예:\n한국학 콘텐츠 플랫폼 구축\n온라인 강좌 개발·제작·보급"}
-              />
+
+            <div className="flex justify-center">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-cordia-teal/50 text-cordia-teal hover:bg-cordia-teal/5"
+                onClick={handleTranslate}
+                disabled={translating}
+              >
+                <Languages className="w-4 h-4 mr-2" />
+                {translating ? "번역 중..." : "국문 → 영문 자동 번역 (DeepL)"}
+              </Button>
+            </div>
+
+            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
+              <p className="text-sm font-semibold text-cordia-dark">🇺🇸 영문 * (기본 표시 언어)</p>
+              <div>
+                <Label>Headline *</Label>
+                <Textarea
+                  rows={2}
+                  value={form.headline}
+                  onChange={(e) => setForm({ ...form, headline: e.target.value })}
+                  placeholder="English headline"
+                />
+                <p className="text-xs text-gray-400 mt-1">줄바꿈하면 화면에서도 줄이 나뉩니다.</p>
+              </div>
+              <div>
+                <Label>Sub lines</Label>
+                <Textarea
+                  rows={3}
+                  value={form.subLines}
+                  onChange={(e) => setForm({ ...form, subLines: e.target.value })}
+                  placeholder="One per line"
+                />
+              </div>
             </div>
           </div>
           <DialogFooter>

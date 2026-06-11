@@ -15,7 +15,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getInitiatives, updateInitiative } from "@/lib/queries";
+import { getInitiatives, updateInitiative, translateTexts } from "@/lib/queries";
+import { Languages } from "lucide-react";
 import type { Initiative } from "@/lib/database.types";
 
 export default function AdminInitiativesTab() {
@@ -29,8 +30,35 @@ export default function AdminInitiativesTab() {
     category: "",
     description: "",
     content: "",
+    titleKo: "",
+    descriptionKo: "",
+    contentKo: "",
     imageUrl: "",
   });
+  const [translating, setTranslating] = useState(false);
+
+  const handleTranslate = async () => {
+    const src = [form.titleKo, form.descriptionKo, form.contentKo];
+    if (!src.some((t) => t.trim())) {
+      toast({ title: "번역할 국문 내용이 없습니다.", variant: "destructive" });
+      return;
+    }
+    setTranslating(true);
+    try {
+      const [title, description, content] = await translateTexts(src.map((t) => t || " "));
+      setForm((f) => ({
+        ...f,
+        title: f.titleKo.trim() ? title.trim() : f.title,
+        description: f.descriptionKo.trim() ? description.trim() : f.description,
+        content: f.contentKo.trim() ? content.trim() : f.content,
+      }));
+      toast({ title: "번역 완료" });
+    } catch (err: any) {
+      toast({ title: "번역 실패", description: err.message, variant: "destructive" });
+    } finally {
+      setTranslating(false);
+    }
+  };
 
   const { data: initiatives = [] } = useQuery({
     queryKey: ["initiatives"],
@@ -45,6 +73,9 @@ export default function AdminInitiativesTab() {
       category: init.category,
       description: init.description,
       content: init.content,
+      titleKo: init.title_ko || "",
+      descriptionKo: init.description_ko || "",
+      contentKo: init.content_ko || "",
       imageUrl: init.image_url || "",
     });
     setFormOpen(true);
@@ -59,6 +90,9 @@ export default function AdminInitiativesTab() {
         category: form.category,
         description: form.description,
         content: form.content,
+        title_ko: form.titleKo || null,
+        description_ko: form.descriptionKo || null,
+        content_ko: form.contentKo || null,
         image_url: form.imageUrl,
       });
     },
@@ -107,8 +141,35 @@ export default function AdminInitiativesTab() {
             <DialogTitle>이니셔티브 수정: {editing?.label}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
+            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
+              <p className="text-sm font-semibold text-cordia-dark">🇰🇷 국문</p>
+              <div>
+                <Label>제목 (국문)</Label>
+                <Input value={form.titleKo} onChange={(e) => setForm({ ...form, titleKo: e.target.value })} />
+              </div>
+              <div>
+                <Label>한줄 설명 (국문)</Label>
+                <Textarea rows={2} value={form.descriptionKo} onChange={(e) => setForm({ ...form, descriptionKo: e.target.value })} />
+              </div>
+              <div>
+                <Label>본문 (국문)</Label>
+                <Textarea rows={5} value={form.contentKo} onChange={(e) => setForm({ ...form, contentKo: e.target.value })} />
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-cordia-teal/50 text-cordia-teal hover:bg-cordia-teal/5"
+                onClick={handleTranslate}
+                disabled={translating}
+              >
+                <Languages className="w-4 h-4 mr-2" />
+                {translating ? "번역 중..." : "국문 → 영문 자동 번역 (DeepL)"}
+              </Button>
+            </div>
             <div>
-              <Label>제목</Label>
+              <Label>Title (영문) *</Label>
               <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </div>
             <div>

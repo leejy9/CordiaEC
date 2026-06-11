@@ -33,7 +33,8 @@ import {
 } from "@/components/ui/select";
 import { Plus, Pencil, Trash2, Calendar, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getPosts, createPost, updatePost, deletePost, uploadImage, deleteImage, getInitiatives } from "@/lib/queries";
+import { getPosts, createPost, updatePost, deletePost, uploadImage, deleteImage, getInitiatives, translateTexts } from "@/lib/queries";
+import { Languages } from "lucide-react";
 import type { Post } from "@/lib/database.types";
 
 type BoardFilter = "all" | "news" | "diaspora";
@@ -55,12 +56,40 @@ export default function AdminPostsTab() {
     title: "",
     excerpt: "",
     content: "",
+    titleKo: "",
+    excerptKo: "",
+    contentKo: "",
     imageUrl: "",
     linkUrl: "",
     initiativeSlug: "",
     publishedDate: new Date().toISOString().split("T")[0],
   };
   const [form, setForm] = useState(defaultForm);
+  const [translating, setTranslating] = useState(false);
+
+  // 국문 → 영문 자동 번역 (DeepL)
+  const handleTranslate = async () => {
+    const sources = [form.titleKo, form.excerptKo, form.contentKo];
+    if (!sources.some((t) => t.trim())) {
+      toast({ title: "번역할 국문 내용이 없습니다.", variant: "destructive" });
+      return;
+    }
+    setTranslating(true);
+    try {
+      const [title, excerpt, content] = await translateTexts(sources.map((t) => t || " "));
+      setForm((f) => ({
+        ...f,
+        title: f.titleKo.trim() ? title.trim() : f.title,
+        excerpt: f.excerptKo.trim() ? excerpt.trim() : f.excerpt,
+        content: f.contentKo.trim() ? content.trim() : f.content,
+      }));
+      toast({ title: "번역 완료", description: "영문 칸을 확인하고 필요하면 수정하세요." });
+    } catch (err: any) {
+      toast({ title: "번역 실패", description: err.message, variant: "destructive" });
+    } finally {
+      setTranslating(false);
+    }
+  };
 
   const { data: postsData, isLoading } = useQuery({
     queryKey: ["admin_posts", boardFilter, page, limit, searchQuery],
@@ -104,6 +133,9 @@ export default function AdminPostsTab() {
       title: post.title,
       excerpt: post.excerpt,
       content: post.content,
+      titleKo: post.title_ko || "",
+      excerptKo: post.excerpt_ko || "",
+      contentKo: post.content_ko || "",
       imageUrl: post.image_url || "",
       linkUrl: post.link_url || "",
       initiativeSlug: post.initiative_slug || "",
@@ -148,6 +180,9 @@ export default function AdminPostsTab() {
         title: form.title,
         excerpt: form.excerpt,
         content: form.content,
+        title_ko: form.titleKo || null,
+        excerpt_ko: form.excerptKo || null,
+        content_ko: form.contentKo || null,
         image_url: form.imageUrl || null,
         link_url: form.linkUrl || null,
         initiative_slug: form.board === "news" && form.initiativeSlug ? form.initiativeSlug : null,
@@ -373,31 +408,77 @@ export default function AdminPostsTab() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label>제목 *</Label>
-              <Input
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="제목을 입력하세요"
-              />
+            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
+              <p className="text-sm font-semibold text-cordia-dark">🇰🇷 국문 (한국어 모드에서 표시)</p>
+              <div>
+                <Label>제목 (국문)</Label>
+                <Input
+                  value={form.titleKo}
+                  onChange={(e) => setForm({ ...form, titleKo: e.target.value })}
+                  placeholder="한국어 제목"
+                />
+              </div>
+              <div>
+                <Label>요약 (국문)</Label>
+                <Textarea
+                  rows={2}
+                  value={form.excerptKo}
+                  onChange={(e) => setForm({ ...form, excerptKo: e.target.value })}
+                  placeholder="한국어 요약"
+                />
+              </div>
+              <div>
+                <Label>본문 (국문)</Label>
+                <Textarea
+                  rows={6}
+                  value={form.contentKo}
+                  onChange={(e) => setForm({ ...form, contentKo: e.target.value })}
+                  placeholder="한국어 본문"
+                />
+              </div>
             </div>
-            <div>
-              <Label>요약 *</Label>
-              <Textarea
-                rows={2}
-                value={form.excerpt}
-                onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-                placeholder="간단한 요약 (목록에 표시)"
-              />
+
+            <div className="flex justify-center">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-cordia-teal/50 text-cordia-teal hover:bg-cordia-teal/5"
+                onClick={handleTranslate}
+                disabled={translating}
+              >
+                <Languages className="w-4 h-4 mr-2" />
+                {translating ? "번역 중..." : "국문 → 영문 자동 번역 (DeepL)"}
+              </Button>
             </div>
-            <div>
-              <Label>본문 *</Label>
-              <Textarea
-                rows={7}
-                value={form.content}
-                onChange={(e) => setForm({ ...form, content: e.target.value })}
-                placeholder="본문 내용"
-              />
+
+            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
+              <p className="text-sm font-semibold text-cordia-dark">🇺🇸 영문 * (기본 표시 언어)</p>
+              <div>
+                <Label>Title *</Label>
+                <Input
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  placeholder="English title"
+                />
+              </div>
+              <div>
+                <Label>Excerpt *</Label>
+                <Textarea
+                  rows={2}
+                  value={form.excerpt}
+                  onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+                  placeholder="English excerpt"
+                />
+              </div>
+              <div>
+                <Label>Content *</Label>
+                <Textarea
+                  rows={6}
+                  value={form.content}
+                  onChange={(e) => setForm({ ...form, content: e.target.value })}
+                  placeholder="English content"
+                />
+              </div>
             </div>
 
             <div>

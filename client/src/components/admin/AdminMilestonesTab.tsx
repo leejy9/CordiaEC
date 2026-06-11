@@ -25,7 +25,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Plus, Pencil, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { getMilestones, createMilestone, updateMilestone, deleteMilestone } from "@/lib/queries";
+import { getMilestones, createMilestone, updateMilestone, deleteMilestone, translateTexts } from "@/lib/queries";
+import { Languages } from "lucide-react";
 import type { Milestone } from "@/lib/database.types";
 
 export default function AdminMilestonesTab() {
@@ -44,6 +45,24 @@ export default function AdminMilestonesTab() {
     queryKey: ["milestones"],
     queryFn: getMilestones,
   });
+  const [translating, setTranslating] = useState(false);
+
+  const handleTranslate = async () => {
+    if (!form.descriptionKo.trim()) {
+      toast({ title: "번역할 국문 내용이 없습니다.", variant: "destructive" });
+      return;
+    }
+    setTranslating(true);
+    try {
+      const [description] = await translateTexts([form.descriptionKo]);
+      setForm((f) => ({ ...f, description: description.trim() }));
+      toast({ title: "번역 완료" });
+    } catch (err: any) {
+      toast({ title: "번역 실패", description: err.message, variant: "destructive" });
+    } finally {
+      setTranslating(false);
+    }
+  };
 
   const openCreate = () => {
     setForm({ periodLabel: "", description: "", descriptionKo: "" });
@@ -211,12 +230,33 @@ export default function AdminMilestonesTab() {
               />
             </div>
             <div>
-              <Label>내용 *</Label>
+              <Label>내용 (국문)</Label>
               <Textarea
-                rows={5}
+                rows={4}
+                value={form.descriptionKo}
+                onChange={(e) => setForm({ ...form, descriptionKo: e.target.value })}
+                placeholder={"한 줄에 하나씩 입력하세요.\n예:\n이주 및 재외동포센터 설립"}
+              />
+            </div>
+            <div className="flex justify-center">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-cordia-teal/50 text-cordia-teal hover:bg-cordia-teal/5"
+                onClick={handleTranslate}
+                disabled={translating}
+              >
+                <Languages className="w-4 h-4 mr-2" />
+                {translating ? "번역 중..." : "국문 → 영문 자동 번역 (DeepL)"}
+              </Button>
+            </div>
+            <div>
+              <Label>내용 (영문) *</Label>
+              <Textarea
+                rows={4}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder={"한 줄에 하나씩 입력하세요.\n예:\n이주 및 재외동포센터 설립\n하와이동포 모국공적 조사사업"}
+                placeholder={"One item per line (English)"}
               />
               <p className="text-xs text-gray-400 mt-1">줄바꿈하면 같은 연도 아래 여러 항목으로 표시됩니다.</p>
             </div>
