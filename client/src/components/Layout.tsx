@@ -74,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
             
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden lg:flex items-center space-x-8">
               {navigation.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <span className={`font-medium transition-colors duration-200 cursor-pointer ${
@@ -90,7 +90,7 @@ export default function Layout({ children }: LayoutProps) {
             </div>
             
             {/* Mobile menu button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <Button
                 variant="ghost"
                 size="icon"
@@ -105,7 +105,7 @@ export default function Layout({ children }: LayoutProps) {
         
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100">
+          <div className="lg:hidden bg-white border-t border-gray-100">
             <div className="px-4 py-4 space-y-4">
               {navigation.map((item) => (
                 <Link key={item.href} href={item.href}>
