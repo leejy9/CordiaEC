@@ -176,7 +176,7 @@ export default function Layout({ children }: LayoutProps) {
             <div>
               <h3 className="font-semibold mb-4">{t('footer.contactInfo')}</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>k-academy@inha.ac.kr</li>
+                <li>cordiaec@gmail.com</li>
                 <li>Incheon, South Korea</li>
               </ul>
             </div>
@@ -184,7 +184,7 @@ export default function Layout({ children }: LayoutProps) {
           
           <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 mb-4 md:mb-0">
-              <p>©2025 CordiaEC. All rights reserved. Email: k-academy@inha.ac.kr</p>
+              <p>©2025 CordiaEC. All rights reserved.</p>
             </div>
             <div className="flex space-x-6">
               <a href="#" className="text-gray-400 hover:text-cordia-teal transition-colors text-sm">

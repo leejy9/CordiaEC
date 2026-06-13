@@ -38,7 +38,7 @@ export default function Contact() {
                       <div>
                         <h3 className="font-semibold text-cordia-dark mb-1">Email</h3>
                         <p className="text-gray-600" data-testid="text-contact-email">
-                          k-academy@inha.ac.kr
+                          cordiaec@gmail.com
                         </p>
                       </div>
                     </div>
@@ -87,11 +87,7 @@ export default function Contact() {
                     <span>10:00 AM - 4:00 PM KST</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Saturday:</span>
-                    <span>10:00 AM - 4:00 PM KST</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Sunday:</span>
+                    <span>Saturday - Sunday:</span>
                     <span>Closed</span>
                   </div>
                 </div>
